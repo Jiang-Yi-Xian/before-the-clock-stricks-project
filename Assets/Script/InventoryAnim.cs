@@ -9,7 +9,12 @@ public class InventoryAnim : MonoBehaviour
     private Vector2 bntshownPos = new Vector2(0, -90);
     private Vector2 bnthiddenPos = new Vector2(0, -10);
     private bool isShown = true;
-    
+
+    public void Start()
+    {
+        inventoryPanel.anchoredPosition = panhiddenPos;
+        inventoryButton.anchoredPosition = bnthiddenPos;
+    }
     public void ToggleInventory() 
     {
         isShown = !isShown;

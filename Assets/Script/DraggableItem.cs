@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,6 +12,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     void Awake() 
     {
         image = GetComponent<Image>();
+        PC = GetComponent<PlayerController>();
+        
     }
 
     public void OnBeginDrag(PointerEventData eventData) 
