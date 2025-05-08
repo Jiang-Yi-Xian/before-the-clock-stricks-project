@@ -6,7 +6,7 @@ public class PickupItem : MonoBehaviour
 
     void OnMouseDown()
     {
-        InventorySystem inventory = FindObjectOfType<InventorySystem>();
+        InventorySystem inventory = FindFirstObjectByType<InventorySystem>();
         inventory.AddItem(itemData);
         Destroy(gameObject);
     }

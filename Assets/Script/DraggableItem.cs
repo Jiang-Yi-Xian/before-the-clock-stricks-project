@@ -41,7 +41,8 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             {
                 Instantiate(itemData.prefab, hit.point, Quaternion.identity);
 
-                InventorySystem inventory = FindObjectOfType<InventorySystem>();
+                
+                InventorySystem inventory = FindFirstObjectByType<InventorySystem>();
                 inventory.RemoveItem(itemData);
             }
         }
