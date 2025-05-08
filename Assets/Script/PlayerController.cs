@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
@@ -33,27 +34,26 @@ public class PlayerController : MonoBehaviour
     }
     private void Move(InputAction.CallbackContext context) 
     {
-        if (isMove)
+        if (EventSystem.current.IsPointerOverGameObject()) { return; }
+        Debug.Log("StartMoving");
+        // Camera ray 偵測滑鼠位置
+        Ray ray = maincam.ScreenPointToRay(Mouse.current.position.ReadValue());
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, clickableLayer))
         {
-            // Camera ray 偵測滑鼠位置
-            Ray ray = maincam.ScreenPointToRay(Mouse.current.position.ReadValue());
-            RaycastHit hit;
+            // 導航系統 & 角色移動
+            agent.SetDestination(hit.point);
+            targetPositon += hit.point;
 
-            if (Physics.Raycast(ray, out hit, clickableLayer))
+            // 角色轉向
+            Vector3 direction = targetPositon - transform.position;
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction.normalized), rotationSpeed * Time.deltaTime);
+            // 點擊特效
+            if (clickEffect != null)
             {
-                // 導航系統 & 角色移動
-                agent.SetDestination(hit.point);
-                targetPositon += hit.point;
-
-                // 角色轉向
-                Vector3 direction = targetPositon - transform.position;
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction.normalized), rotationSpeed * Time.deltaTime);
-                // 點擊特效
-                if (clickEffect != null)
-                {
-                    ParticleSystem effectInstance = Instantiate(clickEffect, hit.point += new Vector3(0, 0.1f, 0), clickEffect.transform.rotation);
-                    Destroy(effectInstance.gameObject, effectInstance.main.duration + effectInstance.main.startLifetime.constant);
-                }
+                ParticleSystem effectInstance = Instantiate(clickEffect, hit.point += new Vector3(0, 0.1f, 0), clickEffect.transform.rotation);
+                Destroy(effectInstance.gameObject, effectInstance.main.duration + effectInstance.main.startLifetime.constant);
             }
         }
     }

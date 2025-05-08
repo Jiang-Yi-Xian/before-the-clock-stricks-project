@@ -987,8 +987,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.33333334
-  m_VoxelSize: 0.1
+  m_VoxelSize: 0.06666667
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 9e3b8edf438178a4fabfe307e11a6ba7, type: 2}
   m_BuildHeightMesh: 0
@@ -1203,6 +1202,7 @@ MonoBehaviour:
     m_Bits: 64
   maincam: {fileID: 1795489682}
   agent: {fileID: 1250896908}
+  isMove: 0
 --- !u!65 &1250896907
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1847,6 +1847,7 @@ MonoBehaviour:
   inventoryUIContainer: {fileID: 1373682723}
   inventorySlotPrefab: {fileID: 4710702801995812774, guid: 77ea4ef965756ca46aaec179b8b872e1, type: 3}
   items: []
+  playerController: {fileID: 1250896906}
 --- !u!1 &1795489680
 GameObject:
   m_ObjectHideFlags: 0
