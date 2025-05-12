@@ -55,6 +55,11 @@ public class PlayerController : MonoBehaviour
                 ParticleSystem effectInstance = Instantiate(clickEffect, hit.point += new Vector3(0, 0.1f, 0), clickEffect.transform.rotation);
                 Destroy(effectInstance.gameObject, effectInstance.main.duration + effectInstance.main.startLifetime.constant);
             }
+            // 判斷射線打到之物件是否為可互動物件
+            if (hit.collider.TryGetComponent<IInteractable>(out var interactable)) 
+            {
+                interactable.Interact(); // 執行互動物件之對應程式
+            }
         }
     }
 }
