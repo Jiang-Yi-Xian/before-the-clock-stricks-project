@@ -7,45 +7,63 @@ using UnityEngine.UI;
 
 public class InventorySystem : MonoBehaviour
 {
-    public Transform inventoryUIContainer;
-    public GameObject inventorySlotPrefab;
+    public static InventorySystem Instance { get; private set; }
 
-    public List<ItemData> items = new List<ItemData>();
+    [SerializeField] private Transform inventoryUIContainer;
+    [SerializeField] private GameObject inventorySlotPrefab;
 
+    private List<ItemData> items = new List<ItemData>();
+
+    private void Awake()
+    {
+        if (Instance != null && Instance != this) 
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
     public void AddItem(ItemData item) 
     {
+        if(item == null) return;
+
         items.Add(item);
         RefreshInventoryUI();
     }
     public void RemoveItem(ItemData item)
     {
+        if (item == null) return;
+
         items.Remove(item);
-        checkItemList();
         RefreshInventoryUI();
     }
     public void RefreshInventoryUI()
     {
-        foreach (Transform child in inventoryUIContainer)
+        if (inventoryUIContainer == null || inventorySlotPrefab == null) return;
+
+        foreach (Transform child in inventoryUIContainer) 
+        {
             Destroy(child.gameObject);
+        }
 
         foreach (ItemData item in items)
         {
-            GameObject slot = Instantiate(inventorySlotPrefab);
-            slot.transform.SetParent(inventoryUIContainer, false);
+            GameObject slot = Instantiate(inventorySlotPrefab, inventoryUIContainer, false);
 
-            slot.GetComponent<Image>().sprite = item.icon;
+            if (slot.GetComponent<CanvasGroup>() == null)
+            {
+                slot.AddComponent<CanvasGroup>();
+            }
+
+            Image slotImage = slot.GetComponent<Image>();
+            if (slotImage != null) 
+            {
+                slotImage.sprite = item.icon;
+            }
 
             DraggableItem draggable = slot.AddComponent<DraggableItem>();
             draggable.itemData = item;
+            draggable.enabled = true;
         }
-        Debug.Log("slot--");
-    }
-    public void checkItemList() 
-    {
-        foreach (var i in items) 
-        {
-            Debug.Log("目前還有物品：" + i.itemName);
-        }
-        Debug.Log("目前沒有物品");
     }
 }

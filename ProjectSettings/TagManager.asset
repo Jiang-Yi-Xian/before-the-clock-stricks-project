@@ -6,7 +6,7 @@ TagManager:
   tags:
   - CinemachineTarget
   - PickupObj
-  - DrapZone
+  - DropZone
   layers:
   - Default
   - TransparentFX
