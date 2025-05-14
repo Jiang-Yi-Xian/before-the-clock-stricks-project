@@ -49,7 +49,6 @@ public class PlayerController : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, clickableLayer))
         {
-            Debug.Log("hitSomething");
             // 導航系統 & 角色移動
             agent.SetDestination(hit.point);
             targetPositon = hit.point;
@@ -67,7 +66,6 @@ public class PlayerController : MonoBehaviour
             if (hit.collider.TryGetComponent<IInteractable>(out var interactable)) 
             {
                 interactable.Interact(); // 執行互動物件之對應程式
-                Debug.Log("nohit");
             }
         }
     }
