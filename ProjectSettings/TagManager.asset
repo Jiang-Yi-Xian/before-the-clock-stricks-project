@@ -7,6 +7,7 @@ TagManager:
   - CinemachineTarget
   - PickupObj
   - DropZone
+  - NPC
   layers:
   - Default
   - TransparentFX
