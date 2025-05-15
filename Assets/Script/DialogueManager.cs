@@ -45,9 +45,14 @@ public class DialogueManager : MonoBehaviour
     {
         if (story.canContinue)
         {
-            string dialogueLine = story.Continue();
+            //string dialogueLine = story.Continue();
 
-            Debug.Log(dialogueLine);
+            //Debug.Log(dialogueLine);
+
+            while (story.canContinue) 
+            {
+                Debug.Log(story.Continue());
+            }
         }
         else 
         {

@@ -1,4 +1,4 @@
 === NPC ===
 Hello
-My is Jack
+My name is Jack
 -> END
