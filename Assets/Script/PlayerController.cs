@@ -12,6 +12,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera maincam;
     [SerializeField] private NavMeshAgent agent;
 
+    [Header("Dialogue(optional)")]
+    [SerializeField] private string dialogueKnotName;
+
     private Vector3 targetPositon;
     private float rotationSpeed = 7.0f;
     public bool isMove { get; private set; }
@@ -66,6 +69,17 @@ public class PlayerController : MonoBehaviour
             if (hit.collider.TryGetComponent<IInteractable>(out var interactable)) 
             {
                 interactable.Interact(); // 執行互動物件之對應程式
+            }
+            if (hit.collider.CompareTag("NPC")) 
+            {
+                if (!dialogueKnotName.Equals(""))
+                {
+                    GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+                }
+                else 
+                {
+                    Debug.Log("Start Function");
+                }
             }
         }
     }
