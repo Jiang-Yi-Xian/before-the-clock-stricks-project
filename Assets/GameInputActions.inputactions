@@ -1,0 +1,34 @@
+{
+    "name": "GameInputActions",
+    "maps": [
+        {
+            "name": "GamePlay",
+            "id": "9f0ff24a-a96a-40ea-87da-b61e3fb714a0",
+            "actions": [
+                {
+                    "name": "Submit",
+                    "type": "Button",
+                    "id": "c871cf25-a652-4482-9200-883fd4077e45",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "40d8633b-5412-4992-b896-8cd3bae66d2b",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

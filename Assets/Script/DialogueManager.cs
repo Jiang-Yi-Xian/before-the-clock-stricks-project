@@ -1,25 +1,50 @@
 using UnityEngine;
 using Ink.Runtime;
+using System.Collections;
 
 public class DialogueManager : MonoBehaviour
 {
     [Header("Ink Story")]
     [SerializeField] private TextAsset inkJson;
-    private Story story;
 
+    [SerializeField] private PlayerController playerController;
+
+    private Story story;
     private bool dialoguePlaying = false;
 
     private void Awake()
     {
         story = new Story(inkJson.text);
+
+        if (playerController == null) 
+        {
+            playerController = FindObjectOfType<PlayerController>();
+
+            if (playerController != null) 
+            {
+                Debug.Log("PlayerController not find.");
+            }
+        }
     }
     private void OnEnable()
     {
         GameEventsManager.Instance.dialogueEvents.OnEnterDialogue += EnterDialogue;
+        GameEventsManager.Instance.dialogueEvents.OnSubmitPress += SubmitPressed;
     }
     private void OnDisable()
     {
         GameEventsManager.Instance.dialogueEvents.OnEnterDialogue -= EnterDialogue;
+        GameEventsManager.Instance.dialogueEvents.OnSubmitPress -= SubmitPressed;
+    }
+
+    private void SubmitPressed() 
+    {
+        if (!dialoguePlaying) 
+        {
+            return;
+        }
+
+        ContinueOrExitStory();
     }
     private void EnterDialogue(string knotName) 
     {
@@ -29,6 +54,14 @@ public class DialogueManager : MonoBehaviour
         }
 
         dialoguePlaying = true;
+
+        GameEventsManager.Instance.dialogueEvents.DialogueStarted();
+
+        // Lock Player movement when entering the dialogue
+        if (playerController != null) 
+        {
+            playerController.isMove = false;
+        }
 
         if (!knotName.Equals(""))
         {
@@ -45,25 +78,32 @@ public class DialogueManager : MonoBehaviour
     {
         if (story.canContinue)
         {
-            //string dialogueLine = story.Continue();
-
-            //Debug.Log(dialogueLine);
-
-            while (story.canContinue) 
-            {
-                Debug.Log(story.Continue());
-            }
+            string dialogueLine = story.Continue();
+            GameEventsManager.Instance.dialogueEvents.DisplayDialogue(dialogueLine);
         }
         else 
         {
-            ExitDialogue();
+            StartCoroutine(ExitDialogue());
         }
     }
-    private void ExitDialogue() 
+    private IEnumerator ExitDialogue() 
     {
-        Debug.Log("Exiting Dialogue");
+        // prevent dialogue looping
+        yield return null;
+
+        // UnLock Player movement when exiting the dialogue
+        if (playerController != null)
+        {
+            playerController.isMove = true;
+        }
+        else 
+        {
+            Debug.Log("PlayerController not find.");
+        }
 
         dialoguePlaying = false;
+
+        GameEventsManager.Instance.dialogueEvents.DialogueFinished();
 
         story.ResetState();
     }

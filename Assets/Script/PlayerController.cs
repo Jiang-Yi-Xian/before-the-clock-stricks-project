@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 targetPositon;
     private float rotationSpeed = 7.0f;
-    public bool isMove { get; private set; }
+    public bool isMove { get; set; }
 
     private void Awake()
     {
@@ -43,6 +43,11 @@ public class PlayerController : MonoBehaviour
     private void OnMove(InputAction.CallbackContext context) 
     {
         if (EventSystem.current.IsPointerOverGameObject()) 
+        {
+            return;
+        }
+
+        if (!isMove)
         {
             return;
         }
