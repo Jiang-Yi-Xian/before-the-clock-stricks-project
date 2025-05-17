@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 308e76a1c72950f4ea1625a04e754ecc, type: 2}
-  m_sharedMaterial: {fileID: -6528807650002413319, guid: 308e76a1c72950f4ea1625a04e754ecc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0b9456204329eeb499f94d5f54f654bd, type: 2}
+  m_sharedMaterial: {fileID: 6311404601387104645, guid: 0b9456204329eeb499f94d5f54f654bd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -236,7 +236,7 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 0, g: 0, b: 0, a: 0}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_HighlightedColor: {r: 0, g: 0, b: 0, a: 0.8627451}
     m_PressedColor: {r: 0, g: 0, b: 0, a: 0.78431374}
     m_SelectedColor: {r: 0, g: 0, b: 0, a: 0.78431374}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
