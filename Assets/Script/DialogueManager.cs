@@ -21,7 +21,7 @@ public class DialogueManager : MonoBehaviour
         {
             playerController = FindObjectOfType<PlayerController>();
 
-            if (playerController != null) 
+            if (playerController == null) 
             {
                 Debug.Log("PlayerController not find.");
             }
