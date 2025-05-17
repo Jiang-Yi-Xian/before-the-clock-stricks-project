@@ -10,6 +10,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private PlayerController playerController;
 
     private Story story;
+    private int currentChoiceIndex = -1;
     private bool dialoguePlaying = false;
 
     private void Awake()
@@ -30,13 +31,19 @@ public class DialogueManager : MonoBehaviour
     {
         GameEventsManager.Instance.dialogueEvents.OnEnterDialogue += EnterDialogue;
         GameEventsManager.Instance.dialogueEvents.OnSubmitPress += SubmitPressed;
+        GameEventsManager.Instance.dialogueEvents.OnUpdateChoiceIndex += UpdateChoiceIndex;
     }
     private void OnDisable()
     {
         GameEventsManager.Instance.dialogueEvents.OnEnterDialogue -= EnterDialogue;
         GameEventsManager.Instance.dialogueEvents.OnSubmitPress -= SubmitPressed;
+        GameEventsManager.Instance.dialogueEvents.OnUpdateChoiceIndex -= UpdateChoiceIndex;
     }
 
+    private void UpdateChoiceIndex(int choiceIndex) 
+    {
+        this.currentChoiceIndex = choiceIndex;
+    }
     private void SubmitPressed() 
     {
         if (!dialoguePlaying) 
@@ -76,12 +83,36 @@ public class DialogueManager : MonoBehaviour
     }
     private void ContinueOrExitStory() 
     {
+        // make a choice, if applicable
+
+        if (story.currentChoices.Count > 0 && currentChoiceIndex != -1) 
+        {
+            story.ChooseChoiceIndex(currentChoiceIndex);
+            // reset choice index for next time
+            currentChoiceIndex = -1;
+        }
         if (story.canContinue)
         {
             string dialogueLine = story.Continue();
-            GameEventsManager.Instance.dialogueEvents.DisplayDialogue(dialogueLine);
+
+            // handle the case where there's an empty Line of dialogue
+            // by continuing until we get a line with aontext
+            while (IsLineBlank(dialogueLine) && story.canContinue) 
+            {
+                dialogueLine = story.Continue();
+            }
+            // handle the case where the Last Line of dialogue is blank
+            // (empty choicew, external function, etc...)
+            if (IsLineBlank(dialogueLine) && !story.canContinue)
+            {
+                StartCoroutine(ExitDialogue());
+            }
+            else 
+            {
+                GameEventsManager.Instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
+            }
         }
-        else 
+        else if(story.currentChoices.Count == 0)
         {
             StartCoroutine(ExitDialogue());
         }
@@ -106,5 +137,9 @@ public class DialogueManager : MonoBehaviour
         GameEventsManager.Instance.dialogueEvents.DialogueFinished();
 
         story.ResetState();
+    }
+    private bool IsLineBlank(string dialogueLine) 
+    {
+        return dialogueLine.Trim().Equals("") || dialogueLine.Trim().Equals("\n");
     }
 }
