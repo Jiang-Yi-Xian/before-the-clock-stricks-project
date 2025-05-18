@@ -11,20 +11,20 @@ NPC：怎麼了嗎？
 
 === MainChoice1 ===
 ME：我為什麼會在這段時間裡一直輪迴？？
--> NPCRespondLooping
+-> NPCResponse1
 === MainChoice2 ===
 ME：這裡是發生什麼事嗎？
--> NPCRespondWhatHappend
+-> NPCResponse2
 === MainChoice3 ===
 ME：沒事，祝你平安。
--> NPCRespondNothing
+-> NPCResponse3
 
-=== NPCRespondLooping ===
+=== NPCResponse1 ===
 NPC：什麼輪迴？？沒有啊!!
 -> NPC
-=== NPCRespondWhatHappend ===
+=== NPCResponse2===
 NPC：這裡一直很平靜沒有發生過任何事。
 -> NPC
-=== NPCRespondNothing ===
+=== NPCResponse3===
 NPC：好的謝謝！
 -> END
