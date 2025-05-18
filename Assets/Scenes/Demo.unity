@@ -1038,7 +1038,7 @@ MonoBehaviour:
   m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0b9456204329eeb499f94d5f54f654bd, type: 2}
-  m_sharedMaterial: {fileID: -6528807650002413319, guid: 308e76a1c72950f4ea1625a04e754ecc, type: 2}
+  m_sharedMaterial: {fileID: 6311404601387104645, guid: 0b9456204329eeb499f94d5f54f654bd, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1334,7 +1334,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inkJson: {fileID: 4900000, guid: 5e465c48f99aedb4bb4ca0331292e4e1, type: 3}
-  playerController: {fileID: 0}
+  playerController: {fileID: 1250896906}
 --- !u!4 &719748125
 Transform:
   m_ObjectHideFlags: 0
