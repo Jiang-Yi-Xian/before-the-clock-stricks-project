@@ -42,10 +42,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnMove(InputAction.CallbackContext context) 
     {
-        if (EventSystem.current.IsPointerOverGameObject()) 
-        {
-            return;
-        }
+        if (EventSystem.current.IsPointerOverGameObject()) return;
 
         if (!isMove)
         {

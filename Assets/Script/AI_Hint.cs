@@ -46,6 +46,10 @@ public class HintRequester : MonoBehaviour
 
         if (request.result != UnityWebRequest.Result.Success)
         {
+            Color c = hintText.color;
+            c.a = 1f;
+            hintText.color = c;
+
             Debug.LogError("查詢失敗: " + request.responseCode + " " + request.error + "\n" + request.downloadHandler.text);
             hintText.text = "提示取得失敗";
         }
@@ -53,6 +57,10 @@ public class HintRequester : MonoBehaviour
         {
             string jsonResult = request.downloadHandler.text;
             HintResponse response = JsonUtility.FromJson<HintResponse>(jsonResult);
+
+            Color c = hintText.color;
+            c.a = 1f;
+            hintText.color = c;
 
             hintText.text = response.ai_generated_hint;
             Debug.Log("提示詞：" + response.ai_generated_hint);
@@ -69,7 +77,8 @@ public class HintRequester : MonoBehaviour
 
     IEnumerator DeleteText()
     {
-        yield return new WaitForSeconds(5);
+        yield return new WaitForSeconds(5f); // 等待 5 秒再開始淡出
+
         Debug.Log("提示詞消失");
         LeanTween.value(gameObject, 1f, 0f, 2f)
             .setOnUpdate((float alpha) =>
@@ -78,6 +87,10 @@ public class HintRequester : MonoBehaviour
                 c.a = alpha;
                 hintText.color = c;
             });
+
+        // 等淡出完成後清空文字（可選）
+        yield return new WaitForSeconds(2f);
+        hintText.text = "";
     }
 
     [System.Serializable]
