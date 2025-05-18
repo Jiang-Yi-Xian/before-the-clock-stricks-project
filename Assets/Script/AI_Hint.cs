@@ -25,7 +25,7 @@ public class HintRequester : MonoBehaviour
 
     IEnumerator SendHintRequest()
     {
-        string url = "http://192.168.75.45:8000/query_hint/";
+        string url = "http://172.20.10.2:8000/query_hint/";
         Debug.Log("°e¥Xªº URL¡G" + url);
 
 
