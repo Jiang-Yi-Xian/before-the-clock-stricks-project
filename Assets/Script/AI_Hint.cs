@@ -1,15 +1,22 @@
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using TMPro;
+using System.Xml;
+
 public class HintRequester : MonoBehaviour
 {
     public Button AIHint;
-    public string playerStatus = "我在走廊找不到鑰匙，門打不開";
-    public string stage = "走廊";
+    public string playerStatus = "我正在學習操作";
+    public string stage = "新手教學";
     public TMPro.TextMeshProUGUI hintText;
-    
+
+    //已使用提示 ID 記錄
+    private List<string> usedIds = new List<string>();
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.H))
@@ -26,11 +33,9 @@ public class HintRequester : MonoBehaviour
     IEnumerator SendHintRequest()
     {
         string url = "http://172.20.10.2:8000/query_hint/";
-        Debug.Log("送出的 URL：" + url);
 
-
-        string json = JsonUtility.ToJson(new QueryRequest(playerStatus, stage, 3));
-        Debug.Log("送出的 JSON: " + json);
+        QueryRequest payload = new QueryRequest(playerStatus, stage, 3, usedIds);
+        string json = JsonUtility.ToJson(payload);
 
         UnityWebRequest request = new UnityWebRequest(url, "POST");
         request.uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
@@ -48,8 +53,31 @@ public class HintRequester : MonoBehaviour
         {
             string jsonResult = request.downloadHandler.text;
             HintResponse response = JsonUtility.FromJson<HintResponse>(jsonResult);
+
             hintText.text = response.ai_generated_hint;
+            Debug.Log("提示詞：" + response.ai_generated_hint);
+
+            //記錄已提示的 hint_id（如果有）
+            if (!string.IsNullOrEmpty(response.hint_id) && !usedIds.Contains(response.hint_id))
+            {
+                usedIds.Add(response.hint_id);
+            }
+
+            StartCoroutine(DeleteText());
         }
+    }
+
+    IEnumerator DeleteText()
+    {
+        yield return new WaitForSeconds(5);
+        Debug.Log("提示詞消失");
+        LeanTween.value(gameObject, 1f, 0f, 2f)
+            .setOnUpdate((float alpha) =>
+            {
+                Color c = hintText.color;
+                c.a = alpha;
+                hintText.color = c;
+            });
     }
 
     [System.Serializable]
@@ -58,12 +86,14 @@ public class HintRequester : MonoBehaviour
         public string player_status;
         public string stage;
         public int n_results;
+        public List<string> used_ids;
 
-        public QueryRequest(string status, string stage, int results)
+        public QueryRequest(string status, string stage, int results, List<string> used)
         {
             player_status = status;
             this.stage = stage;
             n_results = results;
+            used_ids = used;
         }
     }
 
@@ -72,5 +102,6 @@ public class HintRequester : MonoBehaviour
     {
         public string[] raw_hints;
         public string ai_generated_hint;
+        public string hint_id;
     }
 }

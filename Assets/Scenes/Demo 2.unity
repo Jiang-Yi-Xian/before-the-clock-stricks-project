@@ -4007,8 +4007,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AIHint: {fileID: 1532682561}
-  playerStatus: "\u6211\u5728\u8D70\u5ECA\u627E\u4E0D\u5230\u9470\u5319\uFF0C\u9580\u6253\u4E0D\u958B"
-  stage: "\u8D70\u5ECA"
+  playerStatus: "\u6211\u6B63\u5728\u5B78\u7FD2\u64CD\u4F5C"
+  stage: "\u65B0\u624B\u6559\u5B78"
   hintText: {fileID: 2120304772}
 --- !u!1 &1836585016 stripped
 GameObject:
