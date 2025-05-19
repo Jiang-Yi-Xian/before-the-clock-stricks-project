@@ -20,6 +20,9 @@ public class InteractableObject : MonoBehaviour, IInteractable
             case InteractionType.Switch:
                 // ...
                 break;
+            case InteractionType.Touch:
+                Touch();
+                break;
         }
     }
 
@@ -35,5 +38,9 @@ public class InteractableObject : MonoBehaviour, IInteractable
         {
             Debug.Log("InventorySystem No Find");
         }
+    }
+    private void Touch() 
+    {
+        Destroy(this.gameObject);
     }
 }

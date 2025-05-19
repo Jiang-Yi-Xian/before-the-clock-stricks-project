@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum InteractionType { Pick, Observe, Switch }
+public enum InteractionType { Pick, Observe, Switch, Touch }
 
 [CreateAssetMenu(fileName = "NewItem", menuName = "Inventory/Item")]
 public class ItemData : ScriptableObject
