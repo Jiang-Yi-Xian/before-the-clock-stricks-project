@@ -31,14 +31,14 @@ public class PlayerController : MonoBehaviour
         if (agent == null) agent = GetComponent<NavMeshAgent>();
 
         Instance = this;
+
+        stoppingDistance = agent.stoppingDistance;
     }
 
     void Start()
     {
         isMove = true;
         agent.updateRotation = false;
-
-        stoppingDistance = agent.stoppingDistance;
     }
     private void Update()
     {
