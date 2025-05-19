@@ -32,7 +32,7 @@ public class HintRequester : MonoBehaviour
 
     IEnumerator SendHintRequest()
     {
-        string url = "http://172.20.10.2:8000/query_hint/";
+        string url = "http://172.20.10.5:8000/query_hint/";
 
         QueryRequest payload = new QueryRequest(playerStatus, stage, 3, usedIds);
         string json = JsonUtility.ToJson(payload);

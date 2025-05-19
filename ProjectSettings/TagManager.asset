@@ -8,6 +8,7 @@ TagManager:
   - PickupObj
   - DropZone
   - NPC
+  - FrontDoor
   layers:
   - Default
   - TransparentFX

@@ -67,6 +67,10 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 placed = true;
                 PlaceItemInWorld(hit.point);
             }
+            if (itemData.itemName == "key" && hit.collider.CompareTag("FrontDoor")) 
+            {
+                Destroy(hit.collider.gameObject);
+            }
         }
     }
 
