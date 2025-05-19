@@ -13,12 +13,16 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private Vector3 originalPosition;
     private Canvas rootCanvas;
     private CanvasGroup canvasGroup;
+    private GameObject SwitchCamTrigger;
 
     private void Awake()
     {
         image = GetComponent<Image>();
         canvasGroup = GetComponent<CanvasGroup>();
         rootCanvas = GetComponentInParent<Canvas>()?.rootCanvas;
+
+        SwitchCamTrigger = GameObject.FindWithTag("Trigger");
+        SwitchCamTrigger.SetActive(false);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -69,7 +73,10 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             }
             if (itemData.itemName == "key" && hit.collider.CompareTag("FrontDoor")) 
             {
+                InventorySystem.Instance.RemoveItem(itemData);
                 Destroy(hit.collider.gameObject);
+
+                SwitchCamTrigger.SetActive(true);
             }
         }
     }

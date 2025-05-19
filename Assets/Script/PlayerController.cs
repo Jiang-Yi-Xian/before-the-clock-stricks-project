@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
+    public static PlayerController Instance { get; set; }
+
     [SerializeField] private InputAction mouseClickInput;
     [SerializeField] private ParticleSystem clickEffect;
     [SerializeField] private LayerMask clickableLayer;
@@ -27,6 +29,8 @@ public class PlayerController : MonoBehaviour
     {
         if (maincam == null) maincam = Camera.main;
         if (agent == null) agent = GetComponent<NavMeshAgent>();
+
+        Instance = this;
     }
 
     void Start()
@@ -54,6 +58,10 @@ public class PlayerController : MonoBehaviour
         mouseClickInput.Disable(); // °±¥Î·Æ¹«¿é¤J
     }
 
+    public void UpdateCamera(Camera newCam) 
+    {
+        maincam = newCam;
+    }
 
     private void HandleRotation()
     {

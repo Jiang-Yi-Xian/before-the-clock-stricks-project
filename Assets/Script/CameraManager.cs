@@ -1,25 +1,25 @@
 using UnityEngine;
-using Cinemachine;
 using UnityEngine.InputSystem;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] private GameObject mainCam;
-    [SerializeField] private GameObject PassRoadCam;
+    [SerializeField] private Camera mainCam;
+    [SerializeField] private Camera PassRoadCam;
     private bool filp = false;
 
     private void Awake()
     {
-        mainCam = GameObject.Find("MainRoomCamera");
-        PassRoadCam = GameObject.Find("Camera");
-
-        mainCam.SetActive(false);
+        mainCam.enabled = false;
     }
     private void SwithchCamera() 
     {
         filp = !filp;
-        mainCam.SetActive(filp);
-        PassRoadCam.SetActive(!filp);
+        mainCam.enabled = filp;
+        PassRoadCam.enabled = !filp;
+
+        Camera activCam = filp ? mainCam : PassRoadCam;
+
+        PlayerController.Instance.UpdateCamera(activCam);
     }
     private void OnTriggerEnter(Collider other)
     {

@@ -10,8 +10,8 @@ using System.Xml;
 public class HintRequester : MonoBehaviour
 {
     public Button AIHint;
-    public string playerStatus = "我正在學習操作";
-    public string stage = "新手教學";
+    public string playerStatus = "我在走廊";
+    public string stage = "走廊";
     public TMPro.TextMeshProUGUI hintText;
 
     //已使用提示 ID 記錄
@@ -32,7 +32,7 @@ public class HintRequester : MonoBehaviour
 
     IEnumerator SendHintRequest()
     {
-        string url = "http://172.20.10.5:8000/query_hint/";
+        string url = "http://26.182.115.137:8000/query_hint/";
 
         QueryRequest payload = new QueryRequest(playerStatus, stage, 3, usedIds);
         string json = JsonUtility.ToJson(payload);

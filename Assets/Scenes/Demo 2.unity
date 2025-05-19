@@ -975,15 +975,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: fd1c945a8910a6a40a968de173085c5c, type: 3}
       propertyPath: m_LocalScale.x
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fd1c945a8910a6a40a968de173085c5c, type: 3}
       propertyPath: m_LocalScale.y
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fd1c945a8910a6a40a968de173085c5c, type: 3}
       propertyPath: m_LocalScale.z
-      value: 20
+      value: 25
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: fd1c945a8910a6a40a968de173085c5c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1668,11 +1668,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8f5b76b094abd9458c511b8b592e4f1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &494699267 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 65702495048144492, guid: 1f6a602f6aaea4542a165b148b3a1f48, type: 3}
-  m_PrefabInstance: {fileID: 281885871}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &499440244
 GameObject:
   m_ObjectHideFlags: 0
@@ -2624,11 +2619,11 @@ GameObject:
   - component: {fileID: 1299953127}
   m_Layer: 0
   m_Name: CameraSwitchTrigger
-  m_TagString: Untagged
+  m_TagString: Trigger
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1299953123
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2712,8 +2707,8 @@ Transform:
   m_GameObject: {fileID: 1299953122}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.673, y: 0.061, z: -2.99}
-  m_LocalScale: {x: 0.42134845, y: 0.02794182, z: 1.4900049}
+  m_LocalPosition: {x: 3.552, y: 0.061, z: -2.99}
+  m_LocalScale: {x: 0.1516907, y: 0.02794182, z: 1.4900049}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2730,8 +2725,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7199a2493f4a5f340be3433df1a2420a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mainCam: {fileID: 1313780173}
-  PassRoadCam: {fileID: 494699267}
+  mainCam: {fileID: 1313780174}
+  PassRoadCam: {fileID: 49715421}
 --- !u!1 &1312239746
 GameObject:
   m_ObjectHideFlags: 0
@@ -2788,7 +2783,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!20 &1313780174
 Camera:
   m_ObjectHideFlags: 0
@@ -2796,7 +2791,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1313780173}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -4195,8 +4190,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   AIHint: {fileID: 1532682561}
-  playerStatus: "\u6211\u6B63\u5728\u5B78\u7FD2\u64CD\u4F5C"
-  stage: "\u65B0\u624B\u6559\u5B78"
+  playerStatus: "\u6211\u5728\u8D70\u5ECA"
+  stage: "\u8D70\u5ECA"
   hintText: {fileID: 2120304772}
 --- !u!1 &1836585016 stripped
 GameObject:
@@ -5476,7 +5471,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8509700193512096404, guid: 5ff98fe349e074e4a8a1967ef8706275, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.631
+      value: 4.878
       objectReference: {fileID: 0}
     - target: {fileID: 8509700193512096404, guid: 5ff98fe349e074e4a8a1967ef8706275, type: 3}
       propertyPath: m_LocalPosition.y
