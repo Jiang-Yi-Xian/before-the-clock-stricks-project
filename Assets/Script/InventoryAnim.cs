@@ -24,8 +24,6 @@ public class InventoryAnim : MonoBehaviour
 
     // Track panel state
     private bool isPanelVisible = false;
-    // Track animation IDs for cancellation
-    private int panelTweenId = -1;
     private int buttonPositionTweenId = -1;
     private int buttonRotationTweenId = -1;
 

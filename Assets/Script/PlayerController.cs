@@ -17,7 +17,11 @@ public class PlayerController : MonoBehaviour
 
     private Vector3 targetPositon;
     private float rotationSpeed = 7.0f;
+    private bool clickBlockedByUI = false;
     public bool isMove { get; set; }
+    private bool isRotating = false;
+
+    private float stoppingDistance = 0.5f;
 
     private void Awake()
     {
@@ -28,6 +32,15 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         isMove = true;
+        agent.updateRotation = false;
+
+        stoppingDistance = agent.stoppingDistance;
+    }
+    private void Update()
+    {
+        clickBlockedByUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
+
+        HandleRotation();
     }
     private void OnEnable()
     {
@@ -40,11 +53,41 @@ public class PlayerController : MonoBehaviour
         mouseClickInput.performed -= OnMove; // 取消綁定事件
         mouseClickInput.Disable(); // 停用滑鼠輸入
     }
+
+
+    private void HandleRotation()
+    {
+        // Only rotate if the agent has a path AND is actually moving (check velocity)
+        if (agent.hasPath && agent.velocity.sqrMagnitude > 0.1f)
+        {
+            isRotating = true;
+
+            // Calculate direction based on steering target for smooth path following
+            Vector3 direction = agent.steeringTarget - transform.position;
+            direction.y = 0; // Keep rotation flat on the XZ plane
+
+            // Only rotate if we have a meaningful direction
+            if (direction.magnitude > 0.1f)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            }
+        }
+        else if (isRotating)
+        {
+            // We've stopped moving, so stop rotating
+            isRotating = false;
+
+            // Optional: Ensure agent doesn't have a path if we've stopped
+            if (agent.velocity.sqrMagnitude < 0.01f && agent.remainingDistance < stoppingDistance)
+            {
+                agent.ResetPath();
+            }
+        }
+    }
     private void OnMove(InputAction.CallbackContext context) 
     {
-        if (EventSystem.current.IsPointerOverGameObject()) return;
-
-        if (!isMove)
+        if (clickBlockedByUI ||!isMove)
         {
             return;
         }
@@ -58,12 +101,6 @@ public class PlayerController : MonoBehaviour
             agent.SetDestination(hit.point);
             targetPositon = hit.point;
 
-            // 角色轉向
-            Vector3 direction = targetPositon - transform.position;
-            if (direction.magnitude > 0.1f) 
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(direction), rotationSpeed * Time.deltaTime);
-            }
             // 點擊特效
             SpawnClickEffect(hit.point + new Vector3(0, 0.1f, 0));
 
