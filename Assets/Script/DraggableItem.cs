@@ -73,8 +73,15 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             }
             if (itemData.itemName == "key" && hit.collider.CompareTag("FrontDoor")) 
             {
+                placed = true;
+
+                Animator doorAnim = hit.collider.GetComponent<Animator>();
+                if (doorAnim != null) 
+                {
+                    doorAnim.SetTrigger("Onopen");
+                }
+
                 InventorySystem.Instance.RemoveItem(itemData);
-                Destroy(hit.collider.gameObject);
 
                 SwitchCamTrigger.SetActive(true);
             }
