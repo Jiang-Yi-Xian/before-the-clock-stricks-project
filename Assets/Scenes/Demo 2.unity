@@ -3575,6 +3575,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: doorWithAnime
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3de8260423344cf48a2afc0ff68867d8, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 3de8260423344cf48a2afc0ff68867d8, type: 3}
+      propertyPath: m_TagString
+      value: FrontDoor
+      objectReference: {fileID: 0}
     - target: {fileID: 1334414413787867669, guid: 3de8260423344cf48a2afc0ff68867d8, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -3588,6 +3596,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3de8260423344cf48a2afc0ff68867d8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1723462940}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3de8260423344cf48a2afc0ff68867d8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1723462942}
   m_SourcePrefab: {fileID: 100100000, guid: 3de8260423344cf48a2afc0ff68867d8, type: 3}
 --- !u!1 &1633154651 stripped
 GameObject:
@@ -3849,6 +3860,27 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!65 &1723462942
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1723462939}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.058873486, y: 0.0039704484, z: 0.10732795}
+  m_Center: {x: -0.00062993285, y: 0.0011186871, z: 0.052862033}
 --- !u!1 &1731918449
 GameObject:
   m_ObjectHideFlags: 0
