@@ -12,4 +12,9 @@ public class LoopManager : MonoBehaviour
     {
         RestartScene();
     }
+    public void EndGame()
+    {
+        Debug.Log("QuitGame");
+        Application.Quit();
+    }
 }
