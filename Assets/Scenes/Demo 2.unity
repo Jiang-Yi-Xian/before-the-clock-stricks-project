@@ -3194,6 +3194,7 @@ MonoBehaviour:
   canvasRect: {fileID: 117199315}
   linePrefab: {fileID: 306386916765342109, guid: ae5d41a03a4f6494fa5ea9de8e76520d, type: 3}
   lineContainer: {fileID: 58265094}
+  clueBoardPanel: {fileID: 295195702}
   checkIconPrefab: {fileID: 6557662858305390837, guid: 528c0b5e478cc4c4da7cf09f6bba7056, type: 3}
   crossIconPrefab: {fileID: 1627396937521253978, guid: 36cc9bcac4415e241bf3445c9d33e2a4, type: 3}
 --- !u!1 &1101180615
