@@ -123,10 +123,6 @@ public class PlayerController : MonoBehaviour
                 {
                     GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
                 }
-                else 
-                {
-                    Debug.Log("Start Function");
-                }
             }
         }
     }

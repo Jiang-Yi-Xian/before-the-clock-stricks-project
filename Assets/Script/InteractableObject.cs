@@ -5,6 +5,9 @@ public class InteractableObject : MonoBehaviour, IInteractable
 {
     [SerializeField] private ItemData itemData;
 
+    [Header("Dialogue(optional)")]
+    [SerializeField] private string dialogueKnotName;
+
     public void Interact() 
     {
         if (itemData == null) return;
@@ -32,6 +35,13 @@ public class InteractableObject : MonoBehaviour, IInteractable
         if (inventory != null)
         {
             inventory.AddItem(itemData);
+            if (itemData.itemName == "key") 
+            {
+                if (!dialogueKnotName.Equals(""))
+                {
+                    GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+                }
+            }
             Destroy(gameObject);
         }
         else 

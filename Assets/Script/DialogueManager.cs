@@ -1,38 +1,64 @@
 using UnityEngine;
 using Ink.Runtime;
 using System.Collections;
+using System.Collections.Generic;
+
+[System.Serializable]
+public class InkStoryEntry
+{
+    public string storyName;
+    public TextAsset inkJson;
+}
 
 public class DialogueManager : MonoBehaviour
 {
-    [Header("Ink Story")]
-    [SerializeField] private TextAsset inkJson;
+    [Header("Ink Stories")]
+    [SerializeField] private InkStoryEntry[] inkStories;
 
     [SerializeField] private PlayerController playerController;
 
+    private Dictionary<string, Story> storyMap = new Dictionary<string, Story>();
     private Story story;
     private int currentChoiceIndex = -1;
     private bool dialoguePlaying = false;
 
+    private InkExternalFunction inkExternalFunctions;
+
+    [SerializeField] private float timePerCharacter = 0.2f;
+    [SerializeField] private float sentenceEndDelay = 0.5f;
+
+    private Coroutine autoContinue;
+
     private void Awake()
     {
-        story = new Story(inkJson.text);
-
-        if (playerController == null) 
+        foreach (var entry in inkStories)
         {
-            playerController = FindObjectOfType<PlayerController>();
-
-            if (playerController == null) 
+            if (!storyMap.ContainsKey(entry.storyName) && entry.inkJson != null)
             {
-                Debug.Log("PlayerController not find.");
+                storyMap.Add(entry.storyName, new Story(entry.inkJson.text));
             }
         }
+
+        if (playerController == null)
+        {
+            playerController = FindObjectOfType<PlayerController>();
+            if (playerController == null)
+            {
+                Debug.Log("PlayerController not found.");
+            }
+        }
+
+        inkExternalFunctions = new InkExternalFunction();
+        inkExternalFunctions.BindAll(storyMap);
     }
+
     private void OnEnable()
     {
         GameEventsManager.Instance.dialogueEvents.OnEnterDialogue += EnterDialogue;
         GameEventsManager.Instance.dialogueEvents.OnSubmitPress += SubmitPressed;
         GameEventsManager.Instance.dialogueEvents.OnUpdateChoiceIndex += UpdateChoiceIndex;
     }
+
     private void OnDisable()
     {
         GameEventsManager.Instance.dialogueEvents.OnEnterDialogue -= EnterDialogue;
@@ -40,106 +66,134 @@ public class DialogueManager : MonoBehaviour
         GameEventsManager.Instance.dialogueEvents.OnUpdateChoiceIndex -= UpdateChoiceIndex;
     }
 
-    private void UpdateChoiceIndex(int choiceIndex) 
+    private void UpdateChoiceIndex(int choiceIndex)
     {
-        this.currentChoiceIndex = choiceIndex;
+        currentChoiceIndex = choiceIndex;
     }
-    private void SubmitPressed() 
+
+    private void SubmitPressed()
     {
-        if (!dialoguePlaying) 
+        if (!dialoguePlaying) return;
+
+        if (autoContinue != null)
         {
-            return;
+            StopCoroutine(autoContinue);
+            autoContinue = null;
         }
 
-        ContinueOrExitStory();
-    }
-    private void EnterDialogue(string knotName) 
-    {
-        if (dialoguePlaying) 
+        if (story.canContinue || story.currentChoices.Count > 0)
         {
-            return;
+            ContinueOrExitStory();
         }
-
-        dialoguePlaying = true;
-
-        GameEventsManager.Instance.dialogueEvents.DialogueStarted();
-
-        // Lock Player movement when entering the dialogue
-        if (playerController != null) 
-        {
-            playerController.isMove = false;
-        }
-
-        if (!knotName.Equals(""))
-        {
-            story.ChoosePathString(knotName);
-        }
-        else 
-        {
-            Debug.Log("Knot name was the empty string when entering dialogue");
-        }
-
-        ContinueOrExitStory();
-    }
-    private void ContinueOrExitStory() 
-    {
-        // make a choice, if applicable
-
-        if (story.currentChoices.Count > 0 && currentChoiceIndex != -1) 
-        {
-            story.ChooseChoiceIndex(currentChoiceIndex);
-            // reset choice index for next time
-            currentChoiceIndex = -1;
-        }
-        if (story.canContinue)
-        {
-            string dialogueLine = story.Continue();
-
-            // handle the case where there's an empty Line of dialogue
-            // by continuing until we get a line with aontext
-            while (IsLineBlank(dialogueLine) && story.canContinue) 
-            {
-                dialogueLine = story.Continue();
-            }
-            // handle the case where the Last Line of dialogue is blank
-            // (empty choicew, external function, etc...)
-            if (IsLineBlank(dialogueLine) && !story.canContinue)
-            {
-                StartCoroutine(ExitDialogue());
-            }
-            else 
-            {
-                GameEventsManager.Instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
-            }
-        }
-        else if(story.currentChoices.Count == 0)
+        else
         {
             StartCoroutine(ExitDialogue());
         }
     }
-    private IEnumerator ExitDialogue() 
+
+    private void EnterDialogue(string knotNameWithStory)
     {
-        // prevent dialogue looping
+        if (dialoguePlaying) return;
+
+        string[] parts = knotNameWithStory.Split('/');
+        string storyName = parts[0];
+        string knotName = parts.Length > 1 ? parts[1] : "";
+
+        if (!storyMap.TryGetValue(storyName, out Story selectedStory))
+        {
+            Debug.LogError($"找不到對應的 Ink 劇本：{storyName}");
+            return;
+        }
+
+        story = selectedStory;
+        dialoguePlaying = true;
+
+        GameEventsManager.Instance.dialogueEvents.DialogueStarted();
+        if (playerController != null) playerController.isMove = false;
+
+        if (!string.IsNullOrEmpty(knotName))
+        {
+            story.ChoosePathString(knotName);
+        }
+
+        ContinueOrExitStory();
+    }
+
+    private void ContinueOrExitStory()
+    {
+        // 若剛剛有選擇選項，先處理它
+        if (story.currentChoices.Count > 0 && currentChoiceIndex != -1)
+        {
+            story.ChooseChoiceIndex(currentChoiceIndex);
+            currentChoiceIndex = -1;
+        }
+
+        if (story.canContinue)
+        {
+            string dialogueLine = story.Continue();
+            while (IsLineBlank(dialogueLine) && story.canContinue)
+            {
+                dialogueLine = story.Continue();
+            }
+
+            if (IsLineBlank(dialogueLine) && !story.canContinue && story.currentChoices.Count == 0)
+            {
+                StartCoroutine(ExitDialogue());
+            }
+            else
+            {
+                GameEventsManager.Instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
+
+                if (story.currentChoices.Count == 0)
+                {
+                    if (autoContinue != null)
+                        StopCoroutine(autoContinue);
+                    autoContinue = StartCoroutine(AutoContinueNextLine(dialogueLine));
+                }
+            }
+        }
+        else if (story.currentChoices.Count == 0)
+        {
+            StartCoroutine(ExitDialogue());
+        }
+    }
+
+    private IEnumerator ExitDialogue()
+    {
         yield return null;
 
-        // UnLock Player movement when exiting the dialogue
         if (playerController != null)
         {
             playerController.isMove = true;
         }
-        else 
+        else
         {
-            Debug.Log("PlayerController not find.");
+            Debug.Log("PlayerController not found.");
         }
 
         dialoguePlaying = false;
-
         GameEventsManager.Instance.dialogueEvents.DialogueFinished();
 
         story.ResetState();
     }
-    private bool IsLineBlank(string dialogueLine) 
+
+    private bool IsLineBlank(string dialogueLine)
     {
-        return dialogueLine.Trim().Equals("") || dialogueLine.Trim().Equals("\n");
+        return dialogueLine.Trim() == "" || dialogueLine.Trim() == "\n";
+    }
+
+    private IEnumerator AutoContinueNextLine(string line)
+    {
+        float waitTime = (line.Length * timePerCharacter) + sentenceEndDelay;
+        yield return new WaitForSeconds(waitTime);
+
+        if (story.canContinue)
+        {
+            ContinueOrExitStory();
+        }
+        else if (story.currentChoices.Count == 0)
+        {
+            StartCoroutine(ExitDialogue());
+        }
     }
 }
