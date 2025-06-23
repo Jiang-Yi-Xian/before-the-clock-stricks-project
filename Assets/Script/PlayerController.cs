@@ -17,6 +17,10 @@ public class PlayerController : MonoBehaviour
     [Header("Dialogue(optional)")]
     [SerializeField] private string dialogueKnotName;
 
+    [Header("PlayerAnimator")]
+    [SerializeField] private Animator animator;
+    private int animIDspeed;
+
     private Vector3 targetPositon;
     private float rotationSpeed = 7.0f;
     private bool clickBlockedByUI = false;
@@ -33,6 +37,12 @@ public class PlayerController : MonoBehaviour
         Instance = this;
 
         stoppingDistance = agent.stoppingDistance;
+
+        if (animator == null) 
+        {
+            animator = GetComponent<Animator>();
+        }
+        animIDspeed = Animator.StringToHash("Speed");
     }
 
     void Start()
@@ -45,6 +55,8 @@ public class PlayerController : MonoBehaviour
         clickBlockedByUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
 
         HandleRotation();
+
+        UpdateAnimator();
     }
     private void OnEnable()
     {
@@ -125,6 +137,14 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+    }
+    private void UpdateAnimator() 
+    {
+        if (animator == null) return;
+
+        float speed = new Vector3(agent.velocity.x, 0f, agent.velocity.z).magnitude;
+
+        animator.SetFloat(animIDspeed, speed);
     }
     private void SpawnClickEffect(Vector3 position) 
     {
