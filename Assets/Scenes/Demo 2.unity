@@ -893,6 +893,7 @@ MonoBehaviour:
   dialogueKnotName: FrontDoor/NoLoop
   intervalTrigger: 0
   intervalTime: 0
+  triggerOnce: 1
 --- !u!65 &167821790
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1867,7 +1868,7 @@ Transform:
   m_GameObject: {fileID: 399169072}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.45, y: 0.061, z: -2.98}
+  m_LocalPosition: {x: -0.71, y: 0.061, z: -2.98}
   m_LocalScale: {x: 0.5026083, y: 0.02794182, z: 1.541006}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1885,9 +1886,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1f2d070ab1161534e9e13b24dd956840, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dialogueKnotName: SawWifeFallOnGround/SawWifeDown
-  intervalTrigger: 1
-  intervalTime: 2.5
+  dialogueKnotName: WifeStallAlive/WifeNeedHelp
+  intervalTrigger: 0
+  intervalTime: 0
+  triggerOnce: 1
 --- !u!65 &399169075
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -4958,6 +4960,8 @@ MonoBehaviour:
     inkJson: {fileID: 4900000, guid: 0d8c7525f3976654ba1cd7e335646299, type: 3}
   - storyName: SawWifeFallOnGround
     inkJson: {fileID: 4900000, guid: ebe6c7d2cf7e1de4092eba3839ea4023, type: 3}
+  - storyName: WifeStallAlive
+    inkJson: {fileID: 4900000, guid: c943be9b3a166c4449114763e0bc25f5, type: 3}
   playerController: {fileID: 1250896906}
   timePerCharacter: 0.06
   sentenceEndDelay: 0.5
@@ -6824,6 +6828,7 @@ MonoBehaviour:
   dialogueKnotName: SawWifeFallOnGround/SawWifeDown
   intervalTrigger: 1
   intervalTime: 2.5
+  triggerOnce: 1
 --- !u!65 &1870985622
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -9,16 +9,22 @@ public class TriggerHandler : MonoBehaviour
     [SerializeField] private bool intervalTrigger = false;
     [SerializeField] private float intervalTime = 1.0f;
 
+    [Header("是否只能觸發一次?")]
+    [SerializeField] private bool triggerOnce = true;
+
     private bool hasTriggered = false;
 
     private void OnTriggerEnter(Collider other)
     {
 
-        if (hasTriggered) return;
         if (!other.CompareTag("Player")) return;
+
+        if (triggerOnce && hasTriggered) return;
 
         if (!string.IsNullOrEmpty(dialogueKnotName))
         {
+            hasTriggered = true;
+
             if (!intervalTrigger)
             {
                 GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
