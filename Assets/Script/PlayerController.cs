@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("PlayerAnimator")]
     [SerializeField] private Animator animator;
-    private int animIDspeed;
+    private int animIDIsWalk;
 
     private Vector3 targetPositon;
     private float rotationSpeed = 7.0f;
@@ -42,7 +42,7 @@ public class PlayerController : MonoBehaviour
         {
             animator = GetComponent<Animator>();
         }
-        animIDspeed = Animator.StringToHash("Speed");
+        animIDIsWalk = Animator.StringToHash("iswalk");
     }
 
     void Start()
@@ -142,9 +142,13 @@ public class PlayerController : MonoBehaviour
     {
         if (animator == null) return;
 
+        // 取得平面速度大小（忽略 y 軸落差）
         float speed = new Vector3(agent.velocity.x, 0f, agent.velocity.z).magnitude;
 
-        animator.SetFloat(animIDspeed, speed);
+        // 是否正在移動（自訂一個安全閾值 0.1f）
+        bool isWalking = speed > 0.1f;
+
+        animator.SetBool(animIDIsWalk, isWalking);
     }
     private void SpawnClickEffect(Vector3 position) 
     {
