@@ -3,18 +3,22 @@ using UnityEngine.SceneManagement;
 
 public class LoopManager : MonoBehaviour
 {
-    public void RestartScene() 
+    public static LoopManager Instance;
+
+    private void Awake()
     {
-        Scene currentScene = SceneManager.GetActiveScene();
-        SceneManager.LoadScene(currentScene.name);
+        if (Instance != null) { Destroy(gameObject); return; }
+
+        Instance = this;
     }
-    public void LoopButtonPressed() 
+
+    public void TriggerLoop() 
     {
-        RestartScene();
-    }
-    public void EndGame()
-    {
-        Debug.Log("QuitGame");
-        Application.Quit();
+        LoopMemoryManager.Instance.IncrementLoop();
+        LoopTimer.Instance.ResetTimer();
+        StartCoroutine(TimeLoopAnim.Instance.PlayTransition(() =>
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }));
     }
 }
