@@ -131,10 +131,7 @@ public class PlayerController : MonoBehaviour
             }
             if (hit.collider.CompareTag("NPC")) 
             {
-                if (!dialogueKnotName.Equals(""))
-                {
-                    GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
-                }
+                GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
             }
         }
     }
