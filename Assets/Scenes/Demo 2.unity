@@ -6596,14 +6596,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contentParent: {fileID: 1312239746}
-  backingPanel: {fileID: 499440244}
   dialogueText: {fileID: 1874462490}
-  choicesGroup: {fileID: 647926854}
   choiceButtons:
-  - {fileID: 2087673398}
-  - {fileID: 466753979}
-  - {fileID: 2134863527}
   - {fileID: 623572185}
+  - {fileID: 2134863527}
+  - {fileID: 466753979}
+  - {fileID: 2087673398}
 --- !u!1001 &1768957656
 PrefabInstance:
   m_ObjectHideFlags: 0

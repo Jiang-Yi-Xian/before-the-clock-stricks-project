@@ -6,7 +6,7 @@
 * [關心妻子的傷勢]
 -> carewifehurt
 * [沒什麼事]
--> endDialogue
+-> END
 
 === whathappened ===
 我不在時發生了什麼?
@@ -32,7 +32,3 @@
 現在有好一點嗎?
 還是有點痛，可以給我止痛藥嗎?
 -> carewife
-
-=== endDialogue ===
-沒什麼話好講的。
--> DONE

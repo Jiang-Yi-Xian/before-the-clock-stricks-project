@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using Ink.Runtime;
@@ -6,94 +7,78 @@ using Ink.Runtime;
 public class DialoguePanelUI : MonoBehaviour
 {
     [Header("Components")]
-    [SerializeField] private GameObject contentParent;     // 整個 UI 區塊
-    [SerializeField] private GameObject backingPanel;      // 黑色背景 Panel
-    [SerializeField] private TextMeshProUGUI dialogueText; // 顯示文字
-    [SerializeField] private GameObject choicesGroup;      // Choices 空物件
-    [SerializeField] private DialogueChoiceButton[] choiceButtons;
+    [SerializeField] private GameObject contentParent;
+    [SerializeField] private TextMeshProUGUI dialogueText;
+    [SerializeField] private DialogueChoiceButton[] choiceButtons; 
 
     private void Awake()
     {
         contentParent.SetActive(false);
+
         ResetPanel();
     }
-
     private void OnEnable()
     {
-        var ev = GameEventsManager.Instance.dialogueEvents;
-        ev.OnDialogueStarted += DialogueStarted;
-        ev.OnDialogueFinished += DialogueFinished;
-        ev.OnDisplayDialogue += DisplayDialogue;
+        GameEventsManager.Instance.dialogueEvents.OnDialogueStarted += DialogueStarted;
+        GameEventsManager.Instance.dialogueEvents.OnDialogueFinished += DialogueFinished;
+        GameEventsManager.Instance.dialogueEvents.OnDisplayDialogue += DisplayDialogue;
     }
-
     private void OnDisable()
     {
-        var ev = GameEventsManager.Instance.dialogueEvents;
-        ev.OnDialogueStarted -= DialogueStarted;
-        ev.OnDialogueFinished -= DialogueFinished;
-        ev.OnDisplayDialogue -= DisplayDialogue;
+        GameEventsManager.Instance.dialogueEvents.OnDialogueStarted -= DialogueStarted;
+        GameEventsManager.Instance.dialogueEvents.OnDialogueFinished -= DialogueFinished;
+        GameEventsManager.Instance.dialogueEvents.OnDisplayDialogue -= DisplayDialogue;
     }
-
-    private void DialogueStarted()
+    private void DialogueStarted() 
     {
         contentParent.SetActive(true);
     }
-
-    private void DialogueFinished()
+    private void DialogueFinished() 
     {
         contentParent.SetActive(false);
+
+        // reset anything for next time
         ResetPanel();
     }
-
-    private void DisplayDialogue(string dialogueLine, List<Choice> dialogueChoices)
+    private void DisplayDialogue(string dialogueLine, List<Choice> dialogueChoices) 
     {
-        ResetPanel();
+        dialogueText.text = dialogueLine;
 
-        bool hasChoices = dialogueChoices != null && dialogueChoices.Count > 0;
-        bool hasDialogue = !string.IsNullOrWhiteSpace(dialogueLine);
-
-        if (hasChoices && !hasDialogue)
+        if (dialogueChoices.Count > choiceButtons.Length) 
         {
-            choicesGroup.SetActive(true);
-            backingPanel.SetActive(false);
-            dialogueText.gameObject.SetActive(false);
-
-            for (int i = 0; i < dialogueChoices.Count && i < choiceButtons.Length; i++)
-            {
-                var choice = dialogueChoices[i];
-                var button = choiceButtons[i];
-
-                button.gameObject.SetActive(true);
-                button.SetChoiceText(choice.text);
-                button.SetChoiceIndex(i);
-
-                if (i == 0)
-                {
-                    button.SelectButton();
-                    GameEventsManager.Instance.dialogueEvents.UpdateChoiceIndex(0);
-                }
-            }
+            Debug.LogError("More dialogue choice (" 
+                + dialogueChoices.Count + ") came thorugh than supported (" 
+                + choiceButtons.Length + ").");
         }
-        else if (hasDialogue)
+
+        // start with all of the choice buttons hidden
+        foreach (DialogueChoiceButton choiceButton in choiceButtons) 
         {
-            choicesGroup.SetActive(false);
-            backingPanel.SetActive(true);
-            dialogueText.gameObject.SetActive(true);
-            dialogueText.text = dialogueLine;
+            choiceButton.gameObject.SetActive(false);
+        }
+
+        // enable and set info for button depending on ink choice information
+        int choiceButtonIndex = dialogueChoices.Count - 1;
+        for (int inkChoiceIndex = 0; inkChoiceIndex < dialogueChoices.Count; inkChoiceIndex++) 
+        {
+            Choice dialogueChoice = dialogueChoices[inkChoiceIndex];
+            DialogueChoiceButton choiceButton = choiceButtons[choiceButtonIndex]; 
+
+            choiceButton.gameObject.SetActive(true);
+            choiceButton.SetChoiceText(dialogueChoice.text);
+            choiceButton.SetChoiceIndex(inkChoiceIndex);
+
+            if (inkChoiceIndex == 0) 
+            {
+                choiceButton.SelectButton();
+                GameEventsManager.Instance.dialogueEvents.UpdateChoiceIndex(0);
+            }
+
+            choiceButtonIndex--;
         }
     }
-
-
-    private void ResetPanel()
+    private void ResetPanel() 
     {
         dialogueText.text = "";
-        dialogueText.gameObject.SetActive(false);
-        backingPanel.SetActive(false);
-        choicesGroup.SetActive(false);
-
-        foreach (var button in choiceButtons)
-        {
-            button.gameObject.SetActive(false);
-        }
     }
 }

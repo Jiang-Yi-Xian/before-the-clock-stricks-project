@@ -81,12 +81,13 @@ public class DialogueManager : MonoBehaviour
             autoContinue = null;
         }
 
-        if (story.currentChoices.Count > 0 && currentChoiceIndex != -1)
+        if (story.canContinue || story.currentChoices.Count > 0)
         {
-            story.ChooseChoiceIndex(currentChoiceIndex);
-            currentChoiceIndex = -1;
-
             ContinueOrExitStory();
+        }
+        else
+        {
+            StartCoroutine(ExitDialogue());
         }
     }
 
@@ -120,26 +121,38 @@ public class DialogueManager : MonoBehaviour
 
     private void ContinueOrExitStory()
     {
+        // 若剛剛有選擇選項，先處理它
+        if (story.currentChoices.Count > 0 && currentChoiceIndex != -1)
+        {
+            story.ChooseChoiceIndex(currentChoiceIndex);
+            currentChoiceIndex = -1;
+        }
+
         if (story.canContinue)
         {
-            string line = story.Continue();
-            while (IsLineBlank(line) && story.canContinue)
+            string dialogueLine = story.Continue();
+            while (IsLineBlank(dialogueLine) && story.canContinue)
             {
-                line = story.Continue();
+                dialogueLine = story.Continue();
             }
 
-            GameEventsManager.Instance.dialogueEvents.DisplayDialogue(line, null);
+            if (IsLineBlank(dialogueLine) && !story.canContinue && story.currentChoices.Count == 0)
+            {
+                StartCoroutine(ExitDialogue());
+            }
+            else
+            {
+                GameEventsManager.Instance.dialogueEvents.DisplayDialogue(dialogueLine, story.currentChoices);
 
-            if (autoContinue != null)
-                StopCoroutine(autoContinue);
-
-            autoContinue = StartCoroutine(AutoContinueNextLine(line));
+                if (story.currentChoices.Count == 0)
+                {
+                    if (autoContinue != null)
+                        StopCoroutine(autoContinue);
+                    autoContinue = StartCoroutine(AutoContinueNextLine(dialogueLine));
+                }
+            }
         }
-        else if (story.currentChoices.Count > 0)
-        {
-            GameEventsManager.Instance.dialogueEvents.DisplayDialogue("", story.currentChoices);
-        }
-        else
+        else if (story.currentChoices.Count == 0)
         {
             StartCoroutine(ExitDialogue());
         }
@@ -174,6 +187,13 @@ public class DialogueManager : MonoBehaviour
         float waitTime = (line.Length * timePerCharacter) + sentenceEndDelay;
         yield return new WaitForSeconds(waitTime);
 
-        ContinueOrExitStory();
+        if (story.canContinue)
+        {
+            ContinueOrExitStory();
+        }
+        else if (story.currentChoices.Count == 0)
+        {
+            StartCoroutine(ExitDialogue());
+        }
     }
 }
