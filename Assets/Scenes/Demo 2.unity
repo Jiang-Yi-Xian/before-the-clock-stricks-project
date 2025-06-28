@@ -3779,6 +3779,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1101180615}
   m_Mesh: {fileID: 2619086233303812490, guid: 3de8260423344cf48a2afc0ff68867d8, type: 3}
+--- !u!1 &1112946488
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1112946489}
+  m_Layer: 0
+  m_Name: carpetPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1112946489
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1112946488}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.892, y: 0, z: -2.007}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1786729729}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1123650183
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6415,6 +6446,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventoryUIContainer: {fileID: 1373682723}
   inventorySlotPrefab: {fileID: 4710702801995812774, guid: 77ea4ef965756ca46aaec179b8b872e1, type: 3}
+--- !u!1 &1757260277
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1757260278}
+  m_Layer: 0
+  m_Name: keyPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1757260278
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1757260277}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.743, y: 0, z: -2.99}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1786729729}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1765179479
 GameObject:
   m_ObjectHideFlags: 0
@@ -6545,6 +6607,39 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 455279313}
   m_SourcePrefab: {fileID: 100100000, guid: 64dce48905ffd9b4293e595fa6941544, type: 3}
+--- !u!1 &1786729728
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1786729729}
+  m_Layer: 0
+  m_Name: InteractablePoints
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1786729729
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1786729728}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1757260278}
+  - {fileID: 1112946489}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1818365603 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: fd1c945a8910a6a40a968de173085c5c, type: 3}
@@ -6564,6 +6659,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemData: {fileID: 11400000, guid: a8a9d5a2bc4e2b94f8a25b07ac42ba36, type: 2}
   dialogueKnotName: 
+  interactionPoint: {fileID: 1112946489}
 --- !u!65 &1818365608
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8187,6 +8283,10 @@ PrefabInstance:
       propertyPath: dialogueKnotName
       value: FindKey/FindedKey
       objectReference: {fileID: 0}
+    - target: {fileID: 3435136826355173007, guid: 5ff98fe349e074e4a8a1967ef8706275, type: 3}
+      propertyPath: interactionPoint
+      value: 
+      objectReference: {fileID: 1757260278}
     - target: {fileID: 8509700193512096404, guid: 5ff98fe349e074e4a8a1967ef8706275, type: 3}
       propertyPath: m_LocalPosition.x
       value: 4.878
@@ -8248,6 +8348,7 @@ SceneRoots:
   - {fileID: 1982859071}
   - {fileID: 1037368991}
   - {fileID: 1299953126}
+  - {fileID: 1786729729}
   - {fileID: 117199315}
   - {fileID: 21986565}
   - {fileID: 1914682314}

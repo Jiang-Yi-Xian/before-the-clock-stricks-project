@@ -8,6 +8,8 @@ public class InteractableObject : MonoBehaviour, IInteractable
     [Header("Dialogue(optional)")]
     [SerializeField] private string dialogueKnotName;
 
+    [SerializeField] private Transform interactionPoint;
+
     public void Interact() 
     {
         if (itemData == null) return;
@@ -52,5 +54,10 @@ public class InteractableObject : MonoBehaviour, IInteractable
     private void Touch() 
     {
         Destroy(this.gameObject);
+    }
+
+    public Vector3 GetInteractionPoint()
+    {
+        return interactionPoint != null ? interactionPoint.position : transform.position;
     }
 }

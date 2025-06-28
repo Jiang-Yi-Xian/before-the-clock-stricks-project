@@ -128,7 +128,8 @@ public class PlayerController : MonoBehaviour
             // 判斷射線打到之物件是否為可互動物件
             if (hit.collider.TryGetComponent<IInteractable>(out var interactable)) 
             {
-                interactable.Interact(); // 執行互動物件之對應程式
+                Vector3 interactionPoint = interactable.GetInteractionPoint();
+                StartCoroutine(MoveAndInteract(interactionPoint, interactable));
             }
             if (hit.collider.CompareTag("NPC")) 
             {
@@ -156,5 +157,20 @@ public class PlayerController : MonoBehaviour
             float duration = effectInstance.main.duration + effectInstance.main.startLifetime.constant;
             Destroy(effectInstance.gameObject, duration);
         }
+    }
+
+    private IEnumerator MoveAndInteract(Vector3 point, IInteractable interactable)
+    {
+        agent.SetDestination(point);
+        while (Vector3.Distance(transform.position, point) > agent.stoppingDistance + 0.1f)
+        {
+            yield return null;
+        }
+
+        // 可加個朝向面向物件的動畫轉向
+        transform.LookAt(point);
+
+        // 執行互動
+        interactable.Interact();
     }
 }
