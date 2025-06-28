@@ -8,13 +8,10 @@ public class ClueBoardUI : MonoBehaviour
     [SerializeField] private Button toggleButton;
     [SerializeField] private Button closeButton;
 
-    private bool isOpen = false;
-
     private void Start()
     {
         // 初始化狀態（關閉面板）
         clueBoardPanel.SetActive(false);
-        isOpen = false;
 
         toggleButton.gameObject.SetActive(true);
         closeButton.gameObject.SetActive(false);
@@ -32,7 +29,6 @@ public class ClueBoardUI : MonoBehaviour
 
     public void ToggleClueBoard()
     {
-        isOpen = true;
         clueBoardPanel.SetActive(true);
 
         toggleButton.gameObject.SetActive(false);
@@ -41,7 +37,6 @@ public class ClueBoardUI : MonoBehaviour
 
     public void CloseClueBoard()
     {
-        isOpen = false;
         clueBoardPanel.SetActive(false);
 
         toggleButton.gameObject.SetActive(true);

@@ -1,4 +1,5 @@
 === carewife ===
+#block_move
 * [問妻子發生了什麼?]
 -> whathappened
 * [詢問妻子是否知道兇手?]
@@ -6,6 +7,7 @@
 * [關心妻子的傷勢]
 -> carewifehurt
 * [沒什麼事]
+#allow_move
 -> END
 
 === whathappened ===

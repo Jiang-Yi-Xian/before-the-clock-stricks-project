@@ -31,6 +31,8 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        isMove = true;
+
         if (maincam == null) maincam = Camera.main;
         if (agent == null) agent = GetComponent<NavMeshAgent>();
 
@@ -47,7 +49,6 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        isMove = true;
         agent.updateRotation = false;
     }
     private void Update()

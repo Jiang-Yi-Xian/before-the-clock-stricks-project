@@ -41,7 +41,7 @@ public class DialogueManager : MonoBehaviour
 
         if (playerController == null)
         {
-            playerController = FindObjectOfType<PlayerController>();
+            playerController = FindFirstObjectByType<PlayerController>();
             if (playerController == null)
             {
                 Debug.Log("PlayerController not found.");
@@ -127,6 +127,9 @@ public class DialogueManager : MonoBehaviour
             {
                 line = story.Continue();
             }
+
+            HandleTags(story.currentTags);
+
             GameEventsManager.Instance.dialogueEvents.DisplayDialogue(line, null);
             if (autoContinue != null)
                 StopCoroutine(autoContinue);
@@ -135,6 +138,7 @@ public class DialogueManager : MonoBehaviour
         }
         else if (story.currentChoices.Count > 0)
         {
+            HandleTags(story.currentTags);
             GameEventsManager.Instance.dialogueEvents.DisplayDialogue("", story.currentChoices);
         }
         else
@@ -173,5 +177,21 @@ public class DialogueManager : MonoBehaviour
         yield return new WaitForSeconds(waitTime);
 
         ContinueOrExitStory();
+    }
+    private void HandleTags(List<string> tags) 
+    {
+        if (tags == null || tags.Count == 0) return;
+
+        foreach (string tag in tags) 
+        {
+            if (tag == "block_move" && playerController != null)
+            {
+                playerController.isMove = false;
+            }
+            else if (tag == "allow_move" && playerController != null)
+            {
+                playerController.isMove = true;
+            }
+        }
     }
 }
