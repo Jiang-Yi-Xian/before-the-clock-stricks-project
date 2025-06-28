@@ -16,9 +16,17 @@ public class LoopManager : MonoBehaviour
     {
         LoopMemoryManager.Instance.IncrementLoop();
         LoopTimer.Instance.ResetTimer();
+
+        LoopMemoryManager.Instance.spawnPosition = new Vector3(1.4f, 0.0f, -2.9f);
+        LoopMemoryManager.Instance.spawnRotation = new Vector3(0f, -90f, 0f);
+        LoopMemoryManager.Instance.forceRespawnThisLoop = true;
+        LoopMemoryManager.Instance.activeCameraName = "MainRoomCamera";
+
         StartCoroutine(TimeLoopAnim.Instance.PlayTransition(() =>
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+
+            CameraManager.Instance.SwitchTo(LoopMemoryManager.Instance.activeCameraName);
         }));
     }
 }

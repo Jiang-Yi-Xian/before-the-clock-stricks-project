@@ -1,31 +1,112 @@
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class CameraManager : MonoBehaviour
 {
-    [SerializeField] private Camera mainCam;
-    [SerializeField] private Camera PassRoadCam;
-    private bool filp = false;
+    public static CameraManager Instance;
 
-    private void Awake()
+    [System.Serializable]
+    public class NamedCamera
     {
-        mainCam.enabled = false;
+        public string name;
+        public Camera camera;
     }
-    private void SwithchCamera() 
-    {
-        filp = !filp;
-        mainCam.enabled = filp;
-        PassRoadCam.enabled = !filp;
 
-        Camera activCam = filp ? mainCam : PassRoadCam;
+    [Header("Camera 設定")]
+    public List<NamedCamera> cameraList;
 
-        PlayerController.Instance.UpdateCamera(activCam);
-    }
-    private void OnTriggerEnter(Collider other)
+    private Dictionary<string, Camera> cameraMap = new Dictionary<string, Camera>();
+    private string currentCameraName = "";
+
+    void Awake()
     {
-        if (other.CompareTag("Player")) 
+        if (Instance != null && Instance != this)
         {
-            SwithchCamera();
+            Destroy(gameObject);
+            return;
+        }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+        BuildCameraMap();
+    }
+
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log($"[CameraManager] 場景載入：{scene.name}，重新綁定相機");
+
+        foreach (var entry in cameraList)
+        {
+            if (entry.camera == null)
+            {
+                Camera found = GameObject.Find(entry.name)?.GetComponent<Camera>();
+                if (found != null)
+                {
+                    entry.camera = found;
+                    cameraMap[entry.name] = found;
+                    Debug.Log($"[CameraManager] 綁定相機：{entry.name}");
+                }
+                else
+                {
+                    Debug.LogWarning($"[CameraManager] 找不到相機：{entry.name}");
+                }
+            }
+        }
+
+        // 載入後自動切換回上一個視角（如果有設定）
+        if (!string.IsNullOrEmpty(currentCameraName))
+        {
+            SwitchTo(currentCameraName);
+        }
+    }
+
+    private void BuildCameraMap()
+    {
+        cameraMap.Clear();
+        foreach (var entry in cameraList)
+        {
+            if (entry.camera != null && !cameraMap.ContainsKey(entry.name))
+            {
+                cameraMap.Add(entry.name, entry.camera);
+            }
+        }
+    }
+
+    public void SwitchTo(string cameraName)
+    {
+        Debug.Log($"[CameraManager] 嘗試切換至相機：{cameraName}");
+
+        foreach (var cam in cameraMap.Values)
+        {
+            if (cam != null)
+                cam.enabled = false;
+        }
+
+        if (cameraMap.TryGetValue(cameraName, out Camera targetcam) && targetcam != null)
+        {
+            targetcam.enabled = true;
+            Camera.SetupCurrent(targetcam);
+            currentCameraName = cameraName;
+
+            if (PlayerController.Instance != null)
+            {
+                PlayerController.Instance.UpdateCamera(targetcam);
+            }
+        }
+        else
+        {
+            Debug.LogError($"[CameraManager] 找不到名稱為 {cameraName} 的相機，切換失敗");
         }
     }
 }

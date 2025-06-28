@@ -10,6 +10,7 @@ TagManager:
   - NPC
   - FrontDoor
   - Trigger
+  - EnterDoor
   layers:
   - Default
   - TransparentFX

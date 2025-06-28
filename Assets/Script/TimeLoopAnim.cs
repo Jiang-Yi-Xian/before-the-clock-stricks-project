@@ -9,7 +9,7 @@ public class TimeLoopAnim : MonoBehaviour
 
     [Header("Transition UI")]
     public Image fadeOverlay;
-    public float fadeDuration = 1f;
+    public float fadeDuration = 1.4f;
 
     [Header("Audio")]
     public AudioSource audioSource;

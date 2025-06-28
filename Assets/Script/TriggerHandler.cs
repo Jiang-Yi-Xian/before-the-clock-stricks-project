@@ -16,7 +16,6 @@ public class TriggerHandler : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-
         if (!other.CompareTag("Player")) return;
 
         if (triggerOnce && hasTriggered) return;
@@ -33,6 +32,12 @@ public class TriggerHandler : MonoBehaviour
             {
                 StartCoroutine(DelayedTrigger());
             }
+        }
+
+        if (gameObject.tag == "EnterDoor") 
+        {
+            LoopMemoryManager.Instance.activeCameraName = "MainRoomCamera";
+            CameraManager.Instance.SwitchTo("MainRoomCamera");
         }
     }
     private IEnumerator DelayedTrigger()

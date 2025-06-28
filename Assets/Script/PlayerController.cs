@@ -33,7 +33,6 @@ public class PlayerController : MonoBehaviour
     {
         isMove = true;
 
-        if (maincam == null) maincam = Camera.main;
         if (agent == null) agent = GetComponent<NavMeshAgent>();
 
         Instance = this;
