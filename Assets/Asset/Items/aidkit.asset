@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d93c95e2d84b28d44bf6a8a15ecb8efc, type: 3}
+  m_Name: aidkit
+  m_EditorClassIdentifier: 
+  itemName: aidkit
+  icon: {fileID: 0}
+  prefab: {fileID: 7113103866194179800, guid: 4ea6ea93dc7d135408e0a829daa44395, type: 3}
+  interactionType: 0
