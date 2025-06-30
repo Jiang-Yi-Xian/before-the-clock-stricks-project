@@ -13,16 +13,12 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     private Vector3 originalPosition;
     private Canvas rootCanvas;
     private CanvasGroup canvasGroup;
-    private GameObject SwitchCamTrigger;
 
     private void Awake()
     {
         image = GetComponent<Image>();
         canvasGroup = GetComponent<CanvasGroup>();
         rootCanvas = GetComponentInParent<Canvas>()?.rootCanvas;
-
-        SwitchCamTrigger = GameObject.FindWithTag("Trigger");
-        SwitchCamTrigger.SetActive(false);
     }
 
     public void OnBeginDrag(PointerEventData eventData)
@@ -82,8 +78,14 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 }
 
                 InventorySystem.Instance.RemoveItem(itemData);
+            }
 
-                SwitchCamTrigger.SetActive(true);
+            WifeInteractable wifeTarget = hit.collider.GetComponentInParent<WifeInteractable>();
+            if (itemData.itemName == "aidkit" && wifeTarget != null)
+            {
+                placed = true;
+                Vector3 interactionPoint = wifeTarget.GetInteractionPoint();
+                StartCoroutine(MoveAndGiveItem(interactionPoint, wifeTarget, itemData));
             }
         }
     }
@@ -95,5 +97,21 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             Instantiate(itemData.prefab, position, Quaternion.identity);
             InventorySystem.Instance?.RemoveItem(itemData);
         }
+    }
+
+    private IEnumerator MoveAndGiveItem(Vector3 point, WifeInteractable target, ItemData item)
+    {
+        var player = PlayerController.Instance;
+        var agent = player.GetComponent<UnityEngine.AI.NavMeshAgent>();
+        agent.SetDestination(point);
+
+        while (Vector3.Distance(player.transform.position, point) > agent.stoppingDistance + 0.1f)
+        {
+            yield return null;
+        }
+
+        player.transform.LookAt(point);
+        target.HandleInteractionWith(item);
+        InventorySystem.Instance.RemoveItem(item);
     }
 }

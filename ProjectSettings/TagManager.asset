@@ -11,6 +11,7 @@ TagManager:
   - FrontDoor
   - Trigger
   - EnterDoor
+  - Wife
   layers:
   - Default
   - TransparentFX

@@ -14,9 +14,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera maincam;
     [SerializeField] private NavMeshAgent agent;
 
-    [Header("Dialogue(optional)")]
-    [SerializeField] private string dialogueKnotName;
-
     [Header("PlayerAnimator")]
     [SerializeField] private Animator animator;
     private int animIDIsWalk;
@@ -129,10 +126,6 @@ public class PlayerController : MonoBehaviour
             {
                 Vector3 interactionPoint = interactable.GetInteractionPoint();
                 StartCoroutine(MoveAndInteract(interactionPoint, interactable));
-            }
-            if (hit.collider.CompareTag("NPC")) 
-            {
-                GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
             }
         }
     }
