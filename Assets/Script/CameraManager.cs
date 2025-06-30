@@ -44,8 +44,6 @@ public class CameraManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"[CameraManager] 場景載入：{scene.name}，重新綁定相機");
-
         foreach (var entry in cameraList)
         {
             if (entry.camera == null)
@@ -55,7 +53,6 @@ public class CameraManager : MonoBehaviour
                 {
                     entry.camera = found;
                     cameraMap[entry.name] = found;
-                    Debug.Log($"[CameraManager] 綁定相機：{entry.name}");
                 }
                 else
                 {
@@ -85,8 +82,6 @@ public class CameraManager : MonoBehaviour
 
     public void SwitchTo(string cameraName)
     {
-        Debug.Log($"[CameraManager] 嘗試切換至相機：{cameraName}");
-
         foreach (var cam in cameraMap.Values)
         {
             if (cam != null)

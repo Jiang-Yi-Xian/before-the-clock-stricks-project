@@ -22,6 +22,8 @@ public class LoopManager : MonoBehaviour
         LoopMemoryManager.Instance.forceRespawnThisLoop = true;
         LoopMemoryManager.Instance.activeCameraName = "MainRoomCamera";
 
+        Debug.Log("TimerLoop Ä²µo");
+
         StartCoroutine(TimeLoopAnim.Instance.PlayTransition(() =>
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
