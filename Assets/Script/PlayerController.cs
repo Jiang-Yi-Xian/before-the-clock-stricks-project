@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
+using NUnit.Framework.Interfaces;
 
 public class PlayerController : MonoBehaviour
 {
@@ -126,6 +127,12 @@ public class PlayerController : MonoBehaviour
             {
                 Vector3 interactionPoint = interactable.GetInteractionPoint();
                 StartCoroutine(MoveAndInteract(interactionPoint, interactable));
+            }
+            WifeInteractable wifeTarget = hit.collider.GetComponentInParent<WifeInteractable>();
+            if (wifeTarget != null)
+            {          
+                Vector3 interactionPoint = wifeTarget.GetInteractionPoint();
+                StartCoroutine(MoveAndInteract(interactionPoint, wifeTarget));
             }
         }
     }

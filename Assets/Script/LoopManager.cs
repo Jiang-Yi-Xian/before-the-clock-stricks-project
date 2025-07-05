@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,6 +16,8 @@ public class LoopManager : MonoBehaviour
     public void TriggerLoop() 
     {
         LoopMemoryManager.Instance.IncrementLoop();
+        LoopMemoryManager.Instance.AddMemory("Loop_Proof");
+        LoopMemoryManager.Instance.AddMemory("SaveWife");
         LoopTimer.Instance.ResetTimer();
 
         LoopMemoryManager.Instance.spawnPosition = new Vector3(1.4f, 0.0f, -2.9f);

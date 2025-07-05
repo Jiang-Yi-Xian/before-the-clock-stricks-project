@@ -23,11 +23,13 @@ public class InkExternalFunction
     public void Bind(Story story)
     {
         story.BindExternalFunction("Audio", (string audioId) => Audio(audioId));
+        story.BindExternalFunction("HasMemory", (string key) => LoopMemoryManager.Instance.HashMemory(key));
     }
 
     public void Unbind(Story story)
     {
         story.UnbindExternalFunction("Audio");
+        story.UnbindExternalFunction("HasMemory");
     }
 
     private void Audio(string audioId)
