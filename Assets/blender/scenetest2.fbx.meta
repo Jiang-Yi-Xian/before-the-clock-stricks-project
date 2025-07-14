@@ -8,37 +8,37 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: bath_floor
-    second: {fileID: -8763036665929361437, guid: 21e30150fe8204945b681b699680c69b, type: 3}
+    second: {fileID: 2100000, guid: 56bf12018158e4948aebfcd4e40ad6b5, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: floor
-    second: {fileID: 7076415496257400960, guid: 21e30150fe8204945b681b699680c69b, type: 3}
+    second: {fileID: 2100000, guid: fae7eeb4bfcf8c6498d2b638a6cc5d76, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: glass
-    second: {fileID: -6708898800098935325, guid: 21e30150fe8204945b681b699680c69b, type: 3}
+    second: {fileID: 2100000, guid: a9676f637b6a6a849b7e947aabd54d87, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: sofa
-    second: {fileID: 6778718061023226055, guid: 21e30150fe8204945b681b699680c69b, type: 3}
+    second: {fileID: 2100000, guid: b0ac647947028c446a198d697ca212bd, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: wall
-    second: {fileID: -535856596259537777, guid: 21e30150fe8204945b681b699680c69b, type: 3}
+    second: {fileID: 2100000, guid: c6047c37c873ec844b72c930b57cbac9, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: window1
-    second: {fileID: 4526722092372125483, guid: 21e30150fe8204945b681b699680c69b, type: 3}
+    second: {fileID: 2100000, guid: d32a068358fbbb44fa27911701e9f746, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: window2
-    second: {fileID: 8020819209351767565, guid: 21e30150fe8204945b681b699680c69b, type: 3}
+    second: {fileID: 2100000, guid: a8cd1a11f33cf9c4db212b9a652e9ec9, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
