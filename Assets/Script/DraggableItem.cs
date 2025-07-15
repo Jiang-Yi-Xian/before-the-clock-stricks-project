@@ -74,7 +74,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 Animator doorAnim = hit.collider.GetComponent<Animator>();
                 if (doorAnim != null) 
                 {
-                    doorAnim.SetTrigger("Onopen");
+                    doorAnim.SetTrigger("door");
                 }
 
                 InventorySystem.Instance.RemoveItem(itemData);
