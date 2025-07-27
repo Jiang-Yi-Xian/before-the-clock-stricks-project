@@ -6783,6 +6783,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07075bc6b6ba2d444b67f6019d644078, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultVoiceSource: {fileID: 0}
+  mainRoleVoiceSource: {fileID: 0}
+  wifeVoiceSource: {fileID: 0}
+  policeVoiceSource: {fileID: 0}
+  defaultMixerGroup: {fileID: 0}
 --- !u!1 &1252194778
 GameObject:
   m_ObjectHideFlags: 0
