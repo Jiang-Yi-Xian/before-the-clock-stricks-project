@@ -82,26 +82,40 @@ public class CameraManager : MonoBehaviour
 
     public void SwitchTo(string cameraName)
     {
+        if (!cameraMap.TryGetValue(cameraName, out Camera targetcam) || targetcam == null)
+        {
+            Debug.LogError($"[CameraManager] 找不到名稱為 {cameraName} 的相機，切換失敗");
+            return;
+        }
+
+        // 關閉所有 Camera 與其 AudioListener
         foreach (var cam in cameraMap.Values)
         {
             if (cam != null)
-                cam.enabled = false;
-        }
-
-        if (cameraMap.TryGetValue(cameraName, out Camera targetcam) && targetcam != null)
-        {
-            targetcam.enabled = true;
-            Camera.SetupCurrent(targetcam);
-            currentCameraName = cameraName;
-
-            if (PlayerController.Instance != null)
             {
-                PlayerController.Instance.UpdateCamera(targetcam);
+                cam.enabled = false;
+
+                AudioListener listener = cam.GetComponent<AudioListener>();
+                if (listener != null)
+                    listener.enabled = false;
             }
         }
-        else
+
+        // 啟用目標 Camera 與其 AudioListener
+        targetcam.enabled = true;
+        currentCameraName = cameraName;
+
+        AudioListener targetListener = targetcam.GetComponent<AudioListener>();
+        if (targetListener != null)
+            targetListener.enabled = true;
+
+        Camera.SetupCurrent(targetcam);
+
+        if (PlayerController.Instance != null)
         {
-            Debug.LogError($"[CameraManager] 找不到名稱為 {cameraName} 的相機，切換失敗");
+            PlayerController.Instance.UpdateCamera(targetcam);
         }
+
+        Debug.Log($"[CameraManager] 已切換至 {cameraName}，啟用 AudioListener。");
     }
 }

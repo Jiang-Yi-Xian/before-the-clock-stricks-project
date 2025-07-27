@@ -22,18 +22,16 @@ public class InkExternalFunction
 
     public void Bind(Story story)
     {
-        story.BindExternalFunction("Audio", (string audioId) => Audio(audioId));
         story.BindExternalFunction("HasMemory", (string key) => LoopMemoryManager.Instance.HashMemory(key));
+
+        story.BindExternalFunction("Audio", (string character, string audioId) => {
+            AudioManager.Instance.PlayVoiceLine(character, audioId);
+        });
     }
 
     public void Unbind(Story story)
     {
         story.UnbindExternalFunction("Audio");
         story.UnbindExternalFunction("HasMemory");
-    }
-
-    private void Audio(string audioId)
-    {
-        AudioManager.Instance.PlayVoiceLine(audioId);
     }
 }

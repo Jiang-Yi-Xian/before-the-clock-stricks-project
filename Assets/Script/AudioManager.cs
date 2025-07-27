@@ -27,13 +27,6 @@ public class AudioManager : MonoBehaviour
         Instance = this;
     }
 
-    // 不需分角色的語音
-    public void PlayVoiceLine(string audioId) 
-    {
-        PlayVoiceLine("Default", audioId);
-    }
-
-    // 需分角色的語音
     public void PlayVoiceLine(string character, string audioId) 
     {
         string path = $"Voice/{character}/{audioId}";

@@ -1,7 +1,7 @@
-EXTERNAL Audio(audioId)
+EXTERNAL Audio(character, audioId)
 EXTERNAL HasMemory(key)
 === WifeNeedHelp ===
-~ Audio("WifeNeedHelp")
+~ Audio("Wife", "1-4")
 快..救我...
 
 ~ temp hasMemory = HasMemory("SaveWife")
@@ -12,7 +12,6 @@ EXTERNAL HasMemory(key)
 -> FirstNoticedResponse
 
 === FirstNoticedResponse ===
-~ Audio("SaveWife")
 等我一下我馬上救你!
 急救箱在哪裡?
 -> END
