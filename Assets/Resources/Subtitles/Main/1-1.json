@@ -1,0 +1,8 @@
+{
+  "timePerCharacter": 0.25,
+  "sentenceEndDelay": 0.8,
+  "lines": [
+    { "text": "早上忘記帶鑰匙了!", "time": 0.0 },
+    { "text": "我記得有備用鑰匙，應該在地毯底下吧...", "time": 1.8 }
+  ]
+}

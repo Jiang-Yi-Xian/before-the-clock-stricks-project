@@ -6,6 +6,8 @@ using Ink.Runtime;
 
 public class DialoguePanelUI : MonoBehaviour
 {
+    public static DialoguePanelUI Instance;
+
     [Header("Components")]
     [SerializeField] private GameObject contentParent;
     [SerializeField] private GameObject backingPanel;
@@ -15,6 +17,8 @@ public class DialoguePanelUI : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         contentParent.SetActive(false);
 
         ResetPanel();
@@ -90,6 +94,21 @@ public class DialoguePanelUI : MonoBehaviour
         foreach (var button in choiceButtons)
         {
             button.gameObject.SetActive(false);
+        }
+    }
+
+    public TextMeshProUGUI GetDialogueText()
+    {
+        return dialogueText;
+    }
+
+    public void HideBackingPanelIfNoChoices()
+    {
+        // 如果當下沒有選項顯示，就關閉 backingPanel
+        if (!choicesGroup.activeSelf)
+        {
+            contentParent.SetActive(false);
+            dialogueText.gameObject.SetActive(false);
         }
     }
 }

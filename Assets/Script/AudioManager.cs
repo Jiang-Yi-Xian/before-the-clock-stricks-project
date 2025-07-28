@@ -6,39 +6,35 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance;
 
-    [Header("角色語音")]
+    [Header("聲音設定")]
     public AudioSource defaultVoiceSource;
-    public AudioSource mainRoleVoiceSource;
-    public AudioSource wifeVoiceSource;
-    public AudioSource policeVoiceSource;
-
-    [Header("混音器")]
     public AudioMixerGroup defaultMixerGroup;
 
     private Dictionary<string, AudioClip> clipCache = new Dictionary<string, AudioClip>();
+    private Dictionary<string, AudioSource> characterSources = new Dictionary<string, AudioSource>();
 
-    private void Awake()
+    public AudioSource CurrentVoiceSource { get; private set; }
+    public SubtitleData CurrentSubtitleData { get; private set; }
+
+    void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        Instance = this;
+        if (Instance == null) Instance = this;
     }
 
-    public void PlayVoiceLine(string character, string audioId) 
+    public void PlayVoiceLine(string character, string voiceId)
     {
-        string path = $"Voice/{character}/{audioId}";
-        if (!clipCache.TryGetValue(path, out AudioClip clip)) 
+        string voicePath = $"Voice/{character}/{voiceId}";
+        string subtitlePath = $"Subtitles/{character}/{voiceId}";
+
+        if (!clipCache.TryGetValue(voicePath, out AudioClip clip))
         {
-            clip = Resources.Load<AudioClip>(path);
+            clip = Resources.Load<AudioClip>(voicePath);
             if (clip == null)
             {
-                Debug.LogWarning($"語音檔未找到：{path}");
+                Debug.LogWarning($"找不到語音檔：{voicePath}");
                 return;
             }
-            clipCache[path] = clip;
+            clipCache[voicePath] = clip;
         }
 
         AudioSource source = GetAudioSource(character);
@@ -46,28 +42,31 @@ public class AudioManager : MonoBehaviour
 
         source.clip = clip;
         source.outputAudioMixerGroup = defaultMixerGroup;
+        source.volume = 0.6f;
         source.Play();
+
+        CurrentVoiceSource = source;
+
+        TextAsset subtitleJson = Resources.Load<TextAsset>(subtitlePath);
+        if (subtitleJson != null)
+        {
+            CurrentSubtitleData = JsonUtility.FromJson<SubtitleData>(subtitleJson.text);
+        }
+        else
+        {
+            CurrentSubtitleData = null;
+        }
     }
 
     private AudioSource GetAudioSource(string character)
     {
-        switch (character.ToLower())
+        if (!characterSources.TryGetValue(character, out AudioSource source) || source == null)
         {
-            case "wife": return wifeVoiceSource;
-            case "police": return policeVoiceSource;
-            case "default":
-            case "main":
-            default: return defaultVoiceSource;
+            GameObject go = new GameObject($"VoiceSource_{character}");
+            source = go.AddComponent<AudioSource>();
+            go.transform.parent = transform;
+            characterSources[character] = source;
         }
-    }
-
-    public bool IsAnyVoicePlaying()
-    {
-        return defaultVoiceSource.isPlaying || wifeVoiceSource.isPlaying || policeVoiceSource.isPlaying;
-    }
-
-    public bool IsCharacterVoicePlaying(string character)
-    {
-        return GetAudioSource(character)?.isPlaying ?? false;
+        return source;
     }
 }

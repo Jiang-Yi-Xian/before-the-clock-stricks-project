@@ -2,6 +2,7 @@ using UnityEngine;
 using Ink.Runtime;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 
 [System.Serializable]
 public class InkStoryEntry
@@ -173,8 +174,58 @@ public class DialogueManager : MonoBehaviour
 
     private IEnumerator AutoContinueNextLine(string line)
     {
-        float waitTime = (line.Length * timePerCharacter) + sentenceEndDelay;
-        yield return new WaitForSeconds(waitTime);
+        AudioSource voice = AudioManager.Instance.CurrentVoiceSource;
+        SubtitleData subtitleData = AudioManager.Instance.CurrentSubtitleData;
+        var dialogueText = DialoguePanelUI.Instance?.GetDialogueText();
+
+        if (dialogueText == null)
+        {
+            Debug.LogError("тぃ Dialogue Text");
+            yield break;
+        }
+
+        if (voice != null && subtitleData != null && subtitleData.lines.Count > 0)
+        {
+            int index = 0;
+            dialogueText.text = "";
+
+            while (voice.isPlaying && index < subtitleData.lines.Count)
+            {
+                float currentTime = voice.time;
+                SubtitleLine subtitleline = subtitleData.lines[index];
+
+                if (currentTime >= subtitleline.time)
+                {
+                    dialogueText.text = subtitleline.text;
+                    index++;
+                }
+
+                yield return null;
+            }
+
+            // 单程杠莱赣陪ボ
+            if (subtitleData.lines.Count > 0)
+            {
+                float lastTime = subtitleData.lines[^1].time;
+                float endTime = voice.clip.length;
+                float remain = Mathf.Clamp(endTime - lastTime, 0.2f, 10f); // 程祏氨 0.2 程 10 
+
+                yield return new WaitForSeconds(remain);
+            }
+
+            dialogueText.text = "";
+
+            DialoguePanelUI.Instance.HideBackingPanelIfNoChoices();
+        }
+        else
+        {
+            // 礚粂ㄏノ subtitleData い陪ボ硉把计┪箇砞
+            float timePerChar = subtitleData != null ? subtitleData.timePerCharacter : timePerCharacter;
+            float delay = subtitleData != null ? subtitleData.sentenceEndDelay : sentenceEndDelay;
+
+            float waitTime = (line.Length * timePerChar) + delay;
+            yield return new WaitForSeconds(waitTime);
+        }
 
         ContinueOrExitStory();
     }
