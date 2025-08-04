@@ -46,10 +46,6 @@ public class ClockTimelineController : MonoBehaviour
 
                 yield return TimeLoopAnim.Instance.FadeToBlack();
 
-                // 傳送玩家
-                PlayerController.Instance.transform.position = playerTeleportPoint.position;
-                PlayerController.Instance.transform.rotation = playerTeleportPoint.rotation;
-
                 // 切回原本相機
                 CameraManager.Instance.SwitchTo(returnCameraName);
 
