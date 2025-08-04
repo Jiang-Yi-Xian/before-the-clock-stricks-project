@@ -213,6 +213,11 @@ public class DialogueManager : MonoBehaviour
                 yield return new WaitForSeconds(remain);
             }
 
+            if (playerController != null)
+            {
+                playerController.isMove = true;
+            }
+
             dialogueText.text = "";
 
             DialoguePanelUI.Instance.HideBackingPanelIfNoChoices();

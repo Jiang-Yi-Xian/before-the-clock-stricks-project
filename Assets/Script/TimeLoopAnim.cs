@@ -59,7 +59,7 @@ public class TimeLoopAnim : MonoBehaviour
         yield return FadeFromBlack();
     }
 
-    private IEnumerator FadeToBlack()
+    public IEnumerator FadeToBlack()
     {
         if (fadeOverlay == null) yield break;
 
@@ -73,7 +73,7 @@ public class TimeLoopAnim : MonoBehaviour
         }
     }
 
-    private IEnumerator FadeFromBlack()
+    public IEnumerator FadeFromBlack()
     {
         if (fadeOverlay == null) yield break;
 
