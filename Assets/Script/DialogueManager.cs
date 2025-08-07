@@ -109,7 +109,10 @@ public class DialogueManager : MonoBehaviour
         dialoguePlaying = true;
 
         GameEventsManager.Instance.dialogueEvents.DialogueStarted();
-        if (playerController != null) playerController.isMove = false;
+        //if (playerController != null) 
+        //{
+        //    playerController.isMove = false;
+        //}
 
         if (!string.IsNullOrEmpty(knotName))
         {
@@ -213,10 +216,10 @@ public class DialogueManager : MonoBehaviour
                 yield return new WaitForSeconds(remain);
             }
 
-            if (playerController != null)
-            {
-                playerController.isMove = true;
-            }
+            //if (playerController != null)
+            //{
+            //    playerController.isMove = true;
+            //}
 
             dialogueText.text = "";
 

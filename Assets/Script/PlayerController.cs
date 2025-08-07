@@ -110,43 +110,47 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        if (!agent.pathPending && agent.remainingDistance > agent.stoppingDistance)
+        {
+            return;
+        }
+
+        int interactableMask = LayerMask.GetMask("Interactable");
+        int walkableMask = LayerMask.GetMask("walkable");
+
         // Camera ray 偵測滑鼠位置
         Ray ray = maincam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, clickableLayer))
+        if (Physics.Raycast(ray, out RaycastHit interactHit, Mathf.Infinity, interactableMask))
         {
-            // 導航系統 & 角色移動
-            agent.SetDestination(hit.point);
-            targetPositon = hit.point;
-
-            // 點擊特效
-            SpawnClickEffect(hit.point + new Vector3(0, 0.1f, 0));
-
-            // 判斷射線打到之物件是否為可互動物件
-            if (hit.collider.TryGetComponent<IInteractable>(out var interactable)) 
+            if (interactHit.collider.TryGetComponent<IInteractable>(out var interactable))
             {
                 Vector3 interactionPoint = interactable.GetInteractionPoint();
                 StartCoroutine(MoveAndInteract(interactionPoint, interactable));
             }
-            WifeInteractable wifeTarget = hit.collider.GetComponentInParent<WifeInteractable>();
-            if (wifeTarget != null)
-            {          
+            else if (interactHit.collider.GetComponentInParent<WifeInteractable>() is WifeInteractable wifeTarget)
+            {
                 Vector3 interactionPoint = wifeTarget.GetInteractionPoint();
                 StartCoroutine(MoveAndInteract(interactionPoint, wifeTarget));
             }
         }
+        else if (Physics.Raycast(ray, out RaycastHit groundHit, Mathf.Infinity, walkableMask))
+        {
+            agent.SetDestination(groundHit.point);
+            targetPositon = groundHit.point;
+
+            SpawnClickEffect(groundHit.point + new Vector3(0, 0.1f, 0));
+        }
     }
     private void UpdateAnimator() 
     {
-        if (animator == null) return;
+        if (animator == null || agent == null) return;
 
-        // 取得平面速度大小（忽略 y 軸落差）
-        float speed = new Vector3(agent.velocity.x, 0f, agent.velocity.z).magnitude;
+        bool hasArrived = !agent.pathPending &&
+                          agent.remainingDistance <= agent.stoppingDistance + 0.05f &&
+                          (!agent.hasPath || agent.velocity.sqrMagnitude < 0.01f);
 
-        // 是否正在移動（自訂一個安全閾值 0.1f）
-        bool isWalking = speed > 0.1f;
-
-        animator.SetBool(animIDIsWalk, isWalking);
+        animator.SetBool(animIDIsWalk, !hasArrived);
     }
     private void SpawnClickEffect(Vector3 position) 
     {
@@ -161,15 +165,18 @@ public class PlayerController : MonoBehaviour
     private IEnumerator MoveAndInteract(Vector3 point, IInteractable interactable)
     {
         agent.SetDestination(point);
-        while (Vector3.Distance(transform.position, point) > agent.stoppingDistance + 0.1f)
+
+        float maxWaitTime = 3f;
+        float timer = 0f;
+        while (Vector3.Distance(transform.position, point) > agent.stoppingDistance + 0.05f)
         {
             yield return null;
+            timer += Time.deltaTime;
+            if (timer > maxWaitTime) break;
         }
 
-        // 可加個朝向面向物件的動畫轉向
         transform.LookAt(point);
 
-        // 執行互動
         interactable.Interact();
     }
 }
