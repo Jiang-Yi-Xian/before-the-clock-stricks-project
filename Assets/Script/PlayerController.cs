@@ -9,10 +9,19 @@ public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance { get; set; }
 
+    [Header("MouseInputAction")]
     [SerializeField] private InputAction mouseClickInput;
+
+    [Header("MouseClickEffect")]
     [SerializeField] private ParticleSystem clickEffect;
+
+    [Header("MoveClickablelayer")]
     [SerializeField] private LayerMask clickableLayer;
+
+    [Header("MainCamByRaycast")]
     [SerializeField] private Camera maincam;
+
+    [Header("NavMeshAgent")]
     [SerializeField] private NavMeshAgent agent;
 
     [Header("PlayerAnimator")]
@@ -37,7 +46,7 @@ public class PlayerController : MonoBehaviour
 
         stoppingDistance = agent.stoppingDistance;
 
-        if (animator == null) 
+        if (animator == null)
         {
             animator = GetComponent<Animator>();
         }
@@ -68,7 +77,7 @@ public class PlayerController : MonoBehaviour
         mouseClickInput.Disable(); // 停用滑鼠輸入
     }
 
-    public void UpdateCamera(Camera newCam) 
+    public void UpdateCamera(Camera newCam)
     {
         maincam = newCam;
     }
@@ -103,14 +112,9 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-    private void OnMove(InputAction.CallbackContext context) 
+    private void OnMove(InputAction.CallbackContext context)
     {
-        if (clickBlockedByUI ||!isMove)
-        {
-            return;
-        }
-
-        if (!agent.pathPending && agent.remainingDistance > agent.stoppingDistance)
+        if (clickBlockedByUI || !isMove)
         {
             return;
         }
@@ -118,7 +122,6 @@ public class PlayerController : MonoBehaviour
         int interactableMask = LayerMask.GetMask("Interactable");
         int walkableMask = LayerMask.GetMask("walkable");
 
-        // Camera ray 偵測滑鼠位置
         Ray ray = maincam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
         if (Physics.Raycast(ray, out RaycastHit interactHit, Mathf.Infinity, interactableMask))
@@ -142,17 +145,19 @@ public class PlayerController : MonoBehaviour
             SpawnClickEffect(groundHit.point + new Vector3(0, 0.1f, 0));
         }
     }
-    private void UpdateAnimator() 
+    private void UpdateAnimator()
     {
-        if (animator == null || agent == null) return;
+        if (animator == null) return;
 
-        bool hasArrived = !agent.pathPending &&
-                          agent.remainingDistance <= agent.stoppingDistance + 0.05f &&
-                          (!agent.hasPath || agent.velocity.sqrMagnitude < 0.01f);
+        // 取得平面速度大小（忽略 y 軸落差）
+        float speed = new Vector3(agent.velocity.x, 0f, agent.velocity.z).magnitude;
 
-        animator.SetBool(animIDIsWalk, !hasArrived);
+        // 是否正在移動（自訂一個安全閾值 0.1f）
+        bool isWalking = speed > 0.1f;
+
+        animator.SetBool(animIDIsWalk, isWalking);
     }
-    private void SpawnClickEffect(Vector3 position) 
+    private void SpawnClickEffect(Vector3 position)
     {
         if (clickEffect != null)
         {
@@ -165,18 +170,15 @@ public class PlayerController : MonoBehaviour
     private IEnumerator MoveAndInteract(Vector3 point, IInteractable interactable)
     {
         agent.SetDestination(point);
-
-        float maxWaitTime = 3f;
-        float timer = 0f;
-        while (Vector3.Distance(transform.position, point) > agent.stoppingDistance + 0.05f)
+        while (Vector3.Distance(transform.position, point) > agent.stoppingDistance + 0.1f)
         {
             yield return null;
-            timer += Time.deltaTime;
-            if (timer > maxWaitTime) break;
         }
 
+        // 可加個朝向面向物件的動畫轉向
         transform.LookAt(point);
 
+        // 執行互動
         interactable.Interact();
     }
 }
