@@ -38,11 +38,14 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         isMove = true;
 
-        if (agent == null) agent = GetComponent<NavMeshAgent>();
-
-        Instance = this;
+        if (agent == null) 
+        {
+            agent = GetComponent<NavMeshAgent>();
+        }
 
         stoppingDistance = agent.stoppingDistance;
 
@@ -55,28 +58,33 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        // 關閉 agent 自動旋轉
         agent.updateRotation = false;
     }
     private void Update()
     {
+        // 檢查滑鼠是否點擊在 UI 上
         clickBlockedByUI = EventSystem.current != null && EventSystem.current.IsPointerOverGameObject();
 
-        HandleRotation();
+        HandleRotation(); // 玩家轉向
 
-        UpdateAnimator();
+        UpdateAnimator(); // 更新動畫狀態
     }
+
+    // 滑鼠事件監聽
     private void OnEnable()
     {
-        mouseClickInput.Enable(); // 啟用滑鼠輸入
-        mouseClickInput.performed += OnMove; // 綁定滑鼠點擊事件
+        mouseClickInput.Enable();
+        mouseClickInput.performed += OnMove;
     }
 
     private void OnDisable()
     {
-        mouseClickInput.performed -= OnMove; // 取消綁定事件
-        mouseClickInput.Disable(); // 停用滑鼠輸入
+        mouseClickInput.performed -= OnMove;
+        mouseClickInput.Disable();
     }
 
+    // 需要切換相機時更新為新的相機
     public void UpdateCamera(Camera newCam)
     {
         maincam = newCam;
@@ -84,16 +92,15 @@ public class PlayerController : MonoBehaviour
 
     private void HandleRotation()
     {
-        // Only rotate if the agent has a path AND is actually moving (check velocity)
+        
         if (agent.hasPath && agent.velocity.sqrMagnitude > 0.1f)
         {
             isRotating = true;
 
-            // Calculate direction based on steering target for smooth path following
+            
             Vector3 direction = agent.steeringTarget - transform.position;
-            direction.y = 0; // Keep rotation flat on the XZ plane
+            direction.y = 0;
 
-            // Only rotate if we have a meaningful direction
             if (direction.magnitude > 0.1f)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
@@ -101,11 +108,9 @@ public class PlayerController : MonoBehaviour
             }
         }
         else if (isRotating)
-        {
-            // We've stopped moving, so stop rotating
+        {     
             isRotating = false;
 
-            // Optional: Ensure agent doesn't have a path if we've stopped
             if (agent.velocity.sqrMagnitude < 0.01f && agent.remainingDistance < stoppingDistance)
             {
                 agent.ResetPath();
@@ -149,10 +154,8 @@ public class PlayerController : MonoBehaviour
     {
         if (animator == null) return;
 
-        // 取得平面速度大小（忽略 y 軸落差）
         float speed = new Vector3(agent.velocity.x, 0f, agent.velocity.z).magnitude;
 
-        // 是否正在移動（自訂一個安全閾值 0.1f）
         bool isWalking = speed > 0.1f;
 
         animator.SetBool(animIDIsWalk, isWalking);
@@ -175,10 +178,8 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
 
-        // 可加個朝向面向物件的動畫轉向
         transform.LookAt(point);
 
-        // 執行互動
         interactable.Interact();
     }
 }
