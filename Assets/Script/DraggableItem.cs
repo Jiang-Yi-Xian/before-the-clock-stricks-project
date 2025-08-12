@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    // Making itemData public again to allow InventorySystem to set it
     public ItemData itemData { get; set; }
 
     private Image image;
@@ -26,7 +25,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         originalParent = transform.parent;
         originalPosition = transform.localPosition;
 
-        // Move to root canvas for proper drag across UI elements
+        
         if (rootCanvas != null)
         {
             transform.SetParent(rootCanvas.transform);
@@ -55,7 +54,6 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
         if (!placed)
         {
-            // Return to original position
             transform.SetParent(originalParent);
             transform.localPosition = originalPosition;
         }
