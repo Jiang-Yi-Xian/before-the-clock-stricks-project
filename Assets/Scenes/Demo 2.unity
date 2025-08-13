@@ -7790,6 +7790,7 @@ MonoBehaviour:
   maincam: {fileID: 1557218823}
   agent: {fileID: 1565823325}
   animator: {fileID: 1565823326}
+  interactArriveTolerance: 0.15
 --- !u!65 &1565823323
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8018,7 +8019,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c30b01c111156654fad6d12758e441fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loopDuration: 35
+  loopDuration: 600
 --- !u!1 &1592742576
 GameObject:
   m_ObjectHideFlags: 0

@@ -109,10 +109,12 @@ public class DialogueManager : MonoBehaviour
         dialoguePlaying = true;
 
         GameEventsManager.Instance.dialogueEvents.DialogueStarted();
-        //if (playerController != null) 
-        //{
-        //    playerController.isMove = false;
-        //}
+
+        if (playerController != null)
+        {
+            playerController.StopMovementHard(); // 停車 + 關動畫
+            playerController.isMove = false;
+        }
 
         if (!string.IsNullOrEmpty(knotName))
         {
@@ -158,10 +160,6 @@ public class DialogueManager : MonoBehaviour
         if (playerController != null)
         {
             playerController.isMove = true;
-        }
-        else
-        {
-            Debug.Log("PlayerController not found.");
         }
 
         dialoguePlaying = false;
@@ -215,11 +213,6 @@ public class DialogueManager : MonoBehaviour
 
                 yield return new WaitForSeconds(remain);
             }
-
-            //if (playerController != null)
-            //{
-            //    playerController.isMove = true;
-            //}
 
             dialogueText.text = "";
 

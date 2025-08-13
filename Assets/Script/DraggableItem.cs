@@ -121,6 +121,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         var agent = player.GetComponent<UnityEngine.AI.NavMeshAgent>();
 
         // 導航到互動點
+        agent.isStopped = false;
         agent.SetDestination(point);
 
         // 等待玩家走到指定距離內
@@ -130,7 +131,10 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         }
 
         // 面向目標
+        Vector3 look = point; look.y = player.transform.position.y;
         player.transform.LookAt(point);
+
+        player.StopMovementHard();
 
         // 觸發妻子的互動邏輯
         target.HandleInteractionWith(item);

@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator animator;
     private int animIDIsWalk;
 
+    [SerializeField] private float interactArriveTolerance = 0.15f;
+
     private Vector3 targetPositon;
     private float rotationSpeed = 7.0f;
     private bool clickBlockedByUI = false;
@@ -144,13 +146,45 @@ public class PlayerController : MonoBehaviour
             {
                 // 與一般互動物件互動
                 Vector3 interactionPoint = interactable.GetInteractionPoint();
-                StartCoroutine(MoveAndInteract(interactionPoint, interactable));
+
+                float needMoveDist = agent.stoppingDistance + interactArriveTolerance;
+                float dist = Vector3.Distance(transform.position, interactionPoint);
+
+                if (dist > needMoveDist)
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(interactionPoint);
+                    StartCoroutine(MoveAndInteract(interactionPoint, interactable));
+                }
+                else 
+                {
+                    StopMovementHard();
+                    Vector3 look = interactionPoint; look.y = transform.position.y;
+                    transform.LookAt(look);
+                    interactable.Interact();
+                }
             }
             else if (interactHit.collider.GetComponentInParent<WifeInteractable>() is WifeInteractable wifeTarget)
             {
                 // 與妻子互動
                 Vector3 interactionPoint = wifeTarget.GetInteractionPoint();
-                StartCoroutine(MoveAndInteract(interactionPoint, wifeTarget));
+
+                float needMoveDist = agent.stoppingDistance + interactArriveTolerance;
+                float dist = Vector3.Distance(transform.position, interactionPoint);
+
+                if (dist > needMoveDist)
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(interactionPoint);
+                    StartCoroutine(MoveAndInteract(interactionPoint, wifeTarget));
+                }
+                else
+                {
+                    StopMovementHard();
+                    Vector3 look = interactionPoint; look.y = transform.position.y;
+                    transform.LookAt(look);
+                    interactable.Interact();
+                }
             }
         }
         // 檢測是否點擊到地面
@@ -167,13 +201,13 @@ public class PlayerController : MonoBehaviour
     // 更新動畫狀態
     private void UpdateAnimator()
     {
-        if (animator == null) return;
+        if (animator == null || agent == null) return;
 
-        // 計算水平移動速度
-        float speed = new Vector3(agent.velocity.x, 0f, agent.velocity.z).magnitude;
+        bool hasFarTarget = agent.remainingDistance > agent.stoppingDistance + 0.05f;
+        bool hasDesiredMove = agent.desiredVelocity.sqrMagnitude > 0.0001f;
+        bool hasRealMove = agent.velocity.sqrMagnitude > 0.0001f;
+        bool isWalking = !agent.isStopped && hasFarTarget && (hasDesiredMove || hasRealMove);
 
-        // 是否進入行走動畫
-        bool isWalking = speed > 0.1f;
         animator.SetBool(animIDIsWalk, isWalking);
     }
 
@@ -191,6 +225,7 @@ public class PlayerController : MonoBehaviour
     // 移動到指定位置並與物件互動
     private IEnumerator MoveAndInteract(Vector3 point, IInteractable interactable)
     {
+        agent.isStopped = false;
         agent.SetDestination(point);
 
         // 等待到達目標點 (加 0.1f 容錯距離)
@@ -200,9 +235,26 @@ public class PlayerController : MonoBehaviour
         }
 
         // 面向互動物件
+        Vector3 look = point; look.y = transform.position.y;
         transform.LookAt(point);
+
+        StopMovementHard();
 
         // 執行互動邏輯
         interactable.Interact();
+    }
+
+    // 停止移動的方法
+    public void StopMovementHard() 
+    {
+        if (agent == null) return;
+
+        agent.isStopped = true;
+        agent.ResetPath();
+
+        if (animator != null) 
+        {
+            animator.SetBool(animIDIsWalk, false);
+        }
     }
 }

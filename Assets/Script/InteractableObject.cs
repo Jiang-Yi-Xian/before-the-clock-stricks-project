@@ -46,12 +46,14 @@ public class InteractableObject : MonoBehaviour, IInteractable
             inventory.AddItem(itemData);
 
             // 如果拾取的物品是鑰匙，且設定了對話節點，則觸發對話
-            if (itemData.itemName == "key") 
+            if (itemData.itemName == "key" && !dialogueKnotName.Equals("")) 
             {
-                if (!dialogueKnotName.Equals(""))
+                if (PlayerController.Instance != null) 
                 {
-                    GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+                    PlayerController.Instance.StopMovementHard();
                 }
+
+                GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
             }
             Destroy(gameObject);
         }
