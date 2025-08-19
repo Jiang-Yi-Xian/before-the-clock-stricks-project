@@ -238,7 +238,7 @@ public class PlayerController : MonoBehaviour
         Vector3 look = point; look.y = transform.position.y;
         transform.LookAt(point);
 
-        StopMovementHard();
+        //StopMovementHard();
 
         // °õ¦æ¤¬°ÊÅÞ¿è
         interactable.Interact();

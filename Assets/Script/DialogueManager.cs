@@ -110,11 +110,11 @@ public class DialogueManager : MonoBehaviour
 
         GameEventsManager.Instance.dialogueEvents.DialogueStarted();
 
-        if (playerController != null)
-        {
-            playerController.StopMovementHard(); // 停車 + 關動畫
-            playerController.isMove = false;
-        }
+        //if (playerController != null)
+        //{
+        //    playerController.StopMovementHard(); // 停車 + 關動畫
+        //    playerController.isMove = false;
+        //}
 
         if (!string.IsNullOrEmpty(knotName))
         {
@@ -157,10 +157,10 @@ public class DialogueManager : MonoBehaviour
     {
         yield return null;
 
-        if (playerController != null)
-        {
-            playerController.isMove = true;
-        }
+        //if (playerController != null)
+        //{
+        //    playerController.isMove = true;
+        //}
 
         dialoguePlaying = false;
         GameEventsManager.Instance.dialogueEvents.DialogueFinished();

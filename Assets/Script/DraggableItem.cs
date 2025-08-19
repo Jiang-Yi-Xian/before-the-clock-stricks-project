@@ -134,7 +134,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         Vector3 look = point; look.y = player.transform.position.y;
         player.transform.LookAt(point);
 
-        player.StopMovementHard();
+        //player.StopMovementHard();
 
         // 觸發妻子的互動邏輯
         target.HandleInteractionWith(item);
