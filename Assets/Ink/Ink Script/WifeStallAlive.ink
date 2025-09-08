@@ -1,7 +1,6 @@
 EXTERNAL Audio(character, audioId)
 EXTERNAL HasMemory(key)
 === WifeNeedHelp ===
-~ Audio("Wife", "1-4")
 快..救我...
 
 ~ temp hasMemory = HasMemory("SaveWife")

@@ -53,7 +53,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
                 //    PlayerController.Instance.StopMovementHard();
                 //}
 
-                // GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+                GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
             }
             Destroy(gameObject);
         }
