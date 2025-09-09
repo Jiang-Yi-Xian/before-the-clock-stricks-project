@@ -82,11 +82,11 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             {
                 placed = true;
 
-                // 撥放開門動畫
-                Animator doorAnim = hit.collider.GetComponent<Animator>();
-                if (doorAnim != null) 
+                // 觸發開門序列（建議 doorController 掛在 FrontDoor 或場景管理物件上）
+                var door = hit.collider.GetComponentInParent<OpenDoorController>();
+                if (door != null)
                 {
-                    doorAnim.SetTrigger("door");
+                    door.BeginSequence();
                 }
 
                 // 從物品欄中移除鑰匙
