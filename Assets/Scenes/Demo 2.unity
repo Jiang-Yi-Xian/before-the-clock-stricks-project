@@ -2072,6 +2072,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -5579398939894184472, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       insertIndex: -1
       addedObject: {fileID: 402925292}
+    - targetCorrespondingSourceObject: {fileID: -5579398939894184472, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 402925295}
     - targetCorrespondingSourceObject: {fileID: 8804008630905682354, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1253935033}
@@ -2110,7 +2113,8 @@ MonoBehaviour:
   player: {fileID: 1565823319}
   agent: {fileID: 1565823325}
   playerAnimator: {fileID: 1565823326}
-  loopDirector: {fileID: 141525265}
+  timelineController: {fileID: 0}
+  intoRoomDir: {fileID: 0}
   playerControlScripts: []
   openDoorState: opening
   walkState: walk
@@ -3671,6 +3675,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.009860002, y: 0.0008000001, z: 0.020099994}
   m_Center: {x: 0.004930001, y: 0.0002999906, z: -0.00041000117}
+--- !u!114 &402925295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 402925284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a9a4db1c80921342a18d7fc89ed4ee0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionPoint: {fileID: 1562127246}
+  doorHinge: {fileID: 402925289}
+  player: {fileID: 1565823319}
+  agent: {fileID: 1565823325}
+  playerAnimator: {fileID: 1565823326}
+  timelineController: {fileID: 141525267}
+  intoRoomDir: {fileID: 454615562}
+  playerControlScripts: []
+  openDoorState: opening
+  walkState: walk
+  idleState: Idle
+  stopDistance: 0.25
+  faceSpeed: 10
+  doorOpenAngle: -90
+  doorOpenDuration: 0.6
+  walkIntoRoomDistance: 2.3
+  walkIntoRoomDuration: 1.2
+  doorCloseDuration: 0.6
+  disableClickOnly: 0
+  alreadyOpenedOnce: 0
 --- !u!1 &418044717
 GameObject:
   m_ObjectHideFlags: 0
@@ -3847,6 +3883,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &454615561
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 454615562}
+  m_Layer: 0
+  m_Name: OpenDoor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &454615562
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 454615561}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 3.866, y: 0, z: -2.898}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1786729729}
+  m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!1001 &466753977
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -8484,7 +8551,7 @@ Transform:
   m_GameObject: {fileID: 1562127245}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.866, y: 0, z: -2.465}
+  m_LocalPosition: {x: 3.866, y: 0, z: -2.898}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8532,6 +8599,7 @@ MonoBehaviour:
   agent: {fileID: 1565823325}
   animator: {fileID: 1565823326}
   interactArriveTolerance: 0.15
+  animatorLocked: 0
 --- !u!65 &1565823323
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -9362,6 +9430,7 @@ Transform:
   m_Children:
   - {fileID: 1757260278}
   - {fileID: 1562127246}
+  - {fileID: 454615562}
   - {fileID: 1112946489}
   - {fileID: 322471242}
   m_Father: {fileID: 0}
