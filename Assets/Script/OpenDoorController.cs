@@ -11,8 +11,7 @@ public class OpenDoorController : MonoBehaviour
     public GameObject player;                 // 玩家物件
     public NavMeshAgent agent;                // 玩家 NavMeshAgent
     public Animator playerAnimator;           // 玩家 Animator
-    public ClockTimelineController timelineController; // 進門動畫控制器
-    public Transform intoRoomDir;             // 人物進門基準點
+    public PlayableDirector loopDirector;     // 輪迴 Timeline
 
     [Header("Player Control Scripts (會暫停)")]
     public MonoBehaviour[] playerControlScripts; // 例如點地面移動腳本
@@ -27,8 +26,8 @@ public class OpenDoorController : MonoBehaviour
     public float faceSpeed = 10f;       // 旋轉看向門的速度
     public float doorOpenAngle = -90f;   // 門打開角度（正負依鉸鏈方向）
     public float doorOpenDuration = 0.6f;
-    public float walkIntoRoomDistance = 3f; // 進門向前走的距離（公尺）
-    public float walkIntoRoomDuration = 0.7f; // 走這段需要的時間（秒）
+    public float walkIntoRoomDistance = 1.5f; // 進門向前走的距離（公尺）
+    public float walkIntoRoomDuration = 1.2f; // 走這段需要的時間（秒）
     public float doorCloseDuration = 0.6f;
 
     [Header("Options")]
@@ -56,8 +55,6 @@ public class OpenDoorController : MonoBehaviour
         // 面向門
         yield return StartCoroutine(FaceTargetCo(transform.position, faceSpeed, 0.25f));
 
-        PlayerController.Instance?.LockAnimator(true);
-
         // 3) 交接控制權：Timeline/程式將直接改 Transform，避免跟 NavMesh 搶位
         if (!disableClickOnly)
         {
@@ -79,7 +76,6 @@ public class OpenDoorController : MonoBehaviour
         // 7) 收尾：停在 Idle
         if (!string.IsNullOrEmpty(idleState))
             playerAnimator.CrossFadeInFixedTime(idleState, 0.1f);
-            playerAnimator.SetBool("iswalk", false);
 
         // 8) 還權給 NavMeshAgent（避免回彈：warp 到玩家現位置）
         if (!disableClickOnly)
@@ -90,10 +86,14 @@ public class OpenDoorController : MonoBehaviour
             agent.isStopped = false;
         }
 
-        PlayerController.Instance?.LockAnimator(false);
-
         // 9) 播放輪迴 Timeline（你已經有了）
-        timelineController.PlaySequence();
+        if (loopDirector != null)
+        {
+            loopDirector.time = 0;
+            loopDirector.Play();
+            while (loopDirector.state == PlayState.Playing)
+                yield return null;
+        }
 
         SetPlayerControls(true);
         alreadyOpenedOnce = true; // 若不想限制可移除此行
@@ -147,21 +147,13 @@ public class OpenDoorController : MonoBehaviour
 
     IEnumerator MovePlayerForwardCo(float distance, float duration)
     {
+        // 播走路動畫
         if (!string.IsNullOrEmpty(walkState))
             playerAnimator.CrossFadeInFixedTime(walkState, 0.1f);
-            playerAnimator.SetBool("iswalk", true);
-
-        // 用 intoRoomDir 的 forward，投影到水平面以避免上下誤差
-        Vector3 dir = intoRoomDir ? intoRoomDir.forward : player.transform.forward;
-        dir.y = 0f;
-        dir = dir.sqrMagnitude > 0.0001f ? dir.normalized : player.transform.forward;
-
-        // 先把玩家朝這個方向，避免一邊轉一邊走造成斜行
-        Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
-        player.transform.rotation = targetRot;
 
         Vector3 start = player.transform.position;
-        Vector3 end = start + dir * distance;
+        Vector3 forward = new Vector3(player.transform.forward.x, 0f, player.transform.forward.z).normalized;
+        Vector3 end = start + forward * distance;
 
         float t = 0f;
         while (t < 1f)

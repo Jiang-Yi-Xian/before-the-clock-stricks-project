@@ -38,8 +38,6 @@ public class PlayerController : MonoBehaviour
 
     private float stoppingDistance = 0.5f;
 
-    public bool animatorLocked = false;
-
     private void Awake()
     {
         Instance = this;
@@ -205,8 +203,6 @@ public class PlayerController : MonoBehaviour
     {
         if (animator == null || agent == null) return;
 
-        if (animatorLocked) return; 
-
         bool hasFarTarget = agent.remainingDistance > agent.stoppingDistance + 0.05f;
         bool hasDesiredMove = agent.desiredVelocity.sqrMagnitude > 0.0001f;
         bool hasRealMove = agent.velocity.sqrMagnitude > 0.0001f;
@@ -260,9 +256,5 @@ public class PlayerController : MonoBehaviour
         {
             animator.SetBool(animIDIsWalk, false);
         }
-    }
-    public void LockAnimator(bool locked)
-    {
-        animatorLocked = locked;
     }
 }
