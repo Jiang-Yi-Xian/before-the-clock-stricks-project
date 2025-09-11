@@ -2000,9 +2000,17 @@ PrefabInstance:
       propertyPath: m_TagString
       value: FrontDoor
       objectReference: {fileID: 0}
+    - target: {fileID: -1985231667673049833, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_Name
+      value: sofa1
+      objectReference: {fileID: 0}
     - target: {fileID: -1823294580088718608, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       propertyPath: m_Layer
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -1397303492462338110, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_Name
+      value: sofa3
       objectReference: {fileID: 0}
     - target: {fileID: -1172154713819661526, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2020,6 +2028,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: -561979596391492886, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_Name
+      value: sofa2
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       propertyPath: m_Name
       value: scenetest3
@@ -2027,6 +2039,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3128088146491921189, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_Name
+      value: sofa5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4299970551758530544, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_Name
+      value: sofa4
       objectReference: {fileID: 0}
     - target: {fileID: 8804008630905682354, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       propertyPath: m_Layer
