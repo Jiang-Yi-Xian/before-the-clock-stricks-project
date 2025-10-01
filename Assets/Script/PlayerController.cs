@@ -15,6 +15,9 @@ public class PlayerController : MonoBehaviour
     [Header("MouseClickEffect")]
     [SerializeField] private ParticleSystem clickEffect;
 
+    [Header("MoveClickablelayer")]
+    [SerializeField] private LayerMask clickableLayer;
+
     [Header("MainCamByRaycast")]
     [SerializeField] private Camera maincam;
 
@@ -25,20 +28,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator animator;
     private int animIDIsWalk;
 
-    [Header("Interact Settings")]
     [SerializeField] private float interactArriveTolerance = 0.15f;
-
-    [Header("Click Routing")]
-    [Tooltip("可行走地面用的 Raycast Layer")]
-    [SerializeField] private LayerMask groundMask;
-    [Tooltip("互動物件用的 Raycast/Overlap Layer（建議獨立成 Interactable）")]
-    [SerializeField] private LayerMask interactableMask;
-    [Tooltip("若互動物沒自訂，使用此封鎖半徑（m）")]
-    [SerializeField] private float defaultBlockRadius = 0.6f;
-    [Tooltip("吸附到 NavMesh 的最遠距離；超過就拒絕移動")]
-    [SerializeField] private float navSnapMax = 1.0f;
-    [Tooltip("只允許完整路徑，避免去不了的點造成怪移動")]
-    [SerializeField] private bool requirePathComplete = true;
 
     private Vector3 targetPositon;
     private float rotationSpeed = 7.0f;
@@ -133,18 +123,24 @@ public class PlayerController : MonoBehaviour
     // 滑鼠點擊事件
     private void OnMove(InputAction.CallbackContext context)
     {
-        if (clickBlockedByUI || !isMove) return;
-        if (maincam == null || agent == null) return;
+        if (clickBlockedByUI || !isMove)
+        {
+            return;
+        }
+
+        // 取得互動與可行走區域 Layer
+        int interactableMask = LayerMask.GetMask("Interactable");
+        int walkableMask = LayerMask.GetMask("walkable");
 
         // 從滑鼠位置發射 Ray
         Ray ray = maincam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        // 1) 互動優先：射到互動物 → 靠近互動點再 Interact（沿用你原本 MoveAndInteract/近距離直接互動）
-        if (Physics.Raycast(ray, out RaycastHit interactHit, Mathf.Infinity, interactableMask, QueryTriggerInteraction.Collide))
+        // 檢測是否點擊到可互動物件
+        if (Physics.Raycast(ray, out RaycastHit interactHit, Mathf.Infinity, interactableMask))
         {
-            var interactable = interactHit.collider.GetComponentInParent<IInteractable>();
-            if (interactable != null)
+            if (interactHit.collider.TryGetComponent<IInteractable>(out var interactable))
             {
+                // 與一般互動物件互動
                 Vector3 interactionPoint = interactable.GetInteractionPoint();
 
                 float needMoveDist = agent.stoppingDistance + interactArriveTolerance;
@@ -152,83 +148,50 @@ public class PlayerController : MonoBehaviour
 
                 if (dist > needMoveDist)
                 {
-                    // NEW: 互動點貼到 NavMesh，半徑依場景調整（0.4~0.8f 常見）
-                    if (!NavMesh.SamplePosition(interactionPoint, out var ip, 0.6f, NavMesh.AllAreas))
-                        return;
-
-                    // NEW: 可選—要求完整路徑，避免末端貼邊造成側移
-                    var path = new NavMeshPath();
-                    if (!agent.CalculatePath(ip.position, path) || path.status != NavMeshPathStatus.PathComplete)
-                        return;
-
                     agent.isStopped = false;
-                    agent.updatePosition = true;
-                    agent.updateRotation = false; // 保持由 HandleRotation 控轉身
-                    agent.SetDestination(ip.position);
-                    StartCoroutine(MoveAndInteract(ip.position, interactable));
+                    agent.SetDestination(interactionPoint);
+                    StartCoroutine(MoveAndInteract(interactionPoint, interactable));
                 }
-                else
+                else 
                 {
                     StopMovementHard();
                     Vector3 look = interactionPoint; look.y = transform.position.y;
                     transform.LookAt(look);
                     interactable.Interact();
                 }
-                return;
+            }
+            else if (interactHit.collider.GetComponentInParent<WifeInteractable>() is WifeInteractable wifeTarget)
+            {
+                // 與妻子互動
+                Vector3 interactionPoint = wifeTarget.GetInteractionPoint();
+
+                float needMoveDist = agent.stoppingDistance + interactArriveTolerance;
+                float dist = Vector3.Distance(transform.position, interactionPoint);
+
+                if (dist > needMoveDist)
+                {
+                    agent.isStopped = false;
+                    agent.SetDestination(interactionPoint);
+                    StartCoroutine(MoveAndInteract(interactionPoint, wifeTarget));
+                }
+                else
+                {
+                    StopMovementHard();
+                    Vector3 look = interactionPoint; look.y = transform.position.y;
+                    transform.LookAt(look);
+                    wifeTarget.Interact(); // ← 用 wifeTarget，而不是 interactable
+                }
             }
         }
-        // 2) 沒打到互動物 → 嘗試地面移動（但先做互動封鎖圈檢查）
-        if (!Physics.Raycast(ray, out RaycastHit groundHit, Mathf.Infinity, groundMask, QueryTriggerInteraction.Ignore))
-            return;
-
-        // 2a) 若點在任何互動物封鎖半徑內 → 不移動（避免小物件誤點造成怪平移）
-        if (IsInsideAnyInteractBlock(groundHit.point))
-            return;
-
-        // 2b) 吸附到 NavMesh（超過 navSnapMax 就拒絕）
-        if (!NavMesh.SamplePosition(groundHit.point, out var sp, navSnapMax, NavMesh.AllAreas))
-            return;
-
-        // 2c) 可選：要求完整路徑（避免不可達目標造成奇異路徑/側移）
-        if (requirePathComplete)
+        // 檢測是否點擊到地面
+        else if (Physics.Raycast(ray, out RaycastHit groundHit, Mathf.Infinity, walkableMask))
         {
-            var path = new NavMeshPath();
-            if (!agent.CalculatePath(sp.position, path) || path.status != NavMeshPathStatus.PathComplete)
-                return;
+            agent.SetDestination(groundHit.point);
+            targetPositon = groundHit.point;
+
+            // 生成點擊特效 (生成位置往上 0.1f 避免與地面重疊)
+            SpawnClickEffect(groundHit.point + new Vector3(0, 0.1f, 0));
         }
-
-        // 3) 一切 OK → 移動
-        agent.isStopped = false;
-        agent.updatePosition = true;
-        agent.updateRotation = false; // 旋轉仍由 HandleRotation 控制
-        agent.SetDestination(sp.position);
-        targetPositon = sp.position;
-
-        // 點擊特效（略抬一點避免貼地 Z-fighting）
-        SpawnClickEffect(sp.position + new Vector3(0, 0.1f, 0));
-    }
-
-    private bool IsInsideAnyInteractBlock(Vector3 p)
-    {
-        // 先用預設半徑掃一圈找附近的互動 Collider（含 Trigger）
-        var cols = Physics.OverlapSphere(p, defaultBlockRadius, interactableMask, QueryTriggerInteraction.Collide);
-        if (cols == null || cols.Length == 0) return false;
-
-        foreach (var c in cols)
-        {
-            if (c == null) continue;
-
-            // 如果該互動物有自訂半徑就用較大者
-            float r = defaultBlockRadius;
-            var io = c.GetComponentInParent<InteractableObject>();
-            if (io != null) r = Mathf.Max(r, io.BlockRadius);
-
-            // 用 bounds 中心做近似（足夠穩定）
-            Vector3 center = c.bounds.center; center.y = p.y;
-            if ((center - p).sqrMagnitude <= r * r)
-                return true;
-        }
-        return false;
     }
 
     // 更新動畫狀態
@@ -237,7 +200,7 @@ public class PlayerController : MonoBehaviour
         if (animator == null || agent == null) return;
         if (animatorLocked) return;
 
-        bool hasFarTarget = agent.remainingDistance > agent.stoppingDistance + 0.15f;
+        bool hasFarTarget = agent.remainingDistance > agent.stoppingDistance + 0.05f;
         bool hasDesiredMove = agent.desiredVelocity.sqrMagnitude > 0.0001f;
         bool hasRealMove = agent.velocity.sqrMagnitude > 0.0001f;
         bool isWalking = !agent.isStopped && hasFarTarget && (hasDesiredMove || hasRealMove);

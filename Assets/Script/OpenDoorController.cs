@@ -67,24 +67,8 @@ public class OpenDoorController : MonoBehaviour
         // 4) 播主角「開門」動畫，同步讓門旋轉到打開 
         yield return StartCoroutine(PlayOpenDoorWithRotateCo());
 
-        // 用 intoRoomDir.forward 算理想終點
-        Vector3 dir = intoRoomDir ? intoRoomDir.forward : player.transform.forward;
-        dir.y = 0f;
-        dir = dir.sqrMagnitude > 1e-4f ? dir.normalized : player.transform.forward;
-        Vector3 desiredEnd = player.transform.position + dir * walkIntoRoomDistance;
-
-        // 先把理想終點貼回 NavMesh（找不到就不要推太深）
-        if (!TryMakeSafeInsidePoint(desiredEnd, 1.0f, out var safeEnd))
-        {
-            // 找不到安全點，保守：不要推，或改成只小推 0.5m（自行擇一）
-            // yield break; // 不推
-            safeEnd = player.transform.position + dir * 0.5f; // 小推半步（可選）
-            if (NavMesh.SamplePosition(safeEnd, out var snap, 0.6f, NavMesh.AllAreas))
-                safeEnd = snap.position;
-        }
-
         // 5) 播主角走路動畫，並把玩家往前移動（Root Motion 關閉，程式位移） 
-        yield return StartCoroutine(MovePlayerToPointCo(safeEnd, walkIntoRoomDuration));
+        yield return StartCoroutine(MovePlayerForwardCo(walkIntoRoomDistance, walkIntoRoomDuration));
 
         // 6) 關門動畫 
         yield return StartCoroutine(RotateDoorCo(doorOpenAngle, 0f, doorCloseDuration));
@@ -99,11 +83,10 @@ public class OpenDoorController : MonoBehaviour
         // 8) 還權給 NavMeshAgent（避免回彈：warp 到玩家現位置） 
         if (!disableClickOnly)
         {
-            SafeWarpTo(safeEnd);
-
-            agent.nextPosition = safeEnd;
+            agent.Warp(player.transform.position);
+            agent.nextPosition = player.transform.position;
             agent.updatePosition = true;
-            agent.updateRotation = false; // ★保持由你自己的 HandleRotation 控轉身
+            agent.updateRotation = true;
             agent.isStopped = false;
             agent.ResetPath();
         }
@@ -166,26 +149,30 @@ public class OpenDoorController : MonoBehaviour
         yield return StartCoroutine(RotateDoorCo(0f, doorOpenAngle, doorOpenDuration));
     }
 
-    IEnumerator MovePlayerToPointCo(Vector3 end, float duration)
+    IEnumerator MovePlayerForwardCo(float distance, float duration)
     {
-        if (!string.IsNullOrEmpty(walkState))
-            playerAnimator.CrossFadeInFixedTime(walkState, 0.1f);
+        if (!string.IsNullOrEmpty(walkState)) playerAnimator.CrossFadeInFixedTime(walkState, 0.1f);
+
         playerAnimator.SetBool("iswalk", true);
 
-        Vector3 start = player.transform.position;
-        Vector3 dir = end - start; dir.y = 0f;
-        if (dir.sqrMagnitude > 1e-4f)
-            player.transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
+        // 用 intoRoomDir 的 forward，投影到水平面以避免上下誤差 
+        Vector3 dir = intoRoomDir ? intoRoomDir.forward : player.transform.forward; dir.y = 0f;
+        dir = dir.sqrMagnitude > 0.0001f ? dir.normalized : player.transform.forward;
 
-        float t = 0f, inv = 1f / Mathf.Max(0.0001f, duration);
+        // 先把玩家朝這個方向，避免一邊轉一邊走造成斜行 
+        Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
+
+        player.transform.rotation = targetRot;
+
+        Vector3 start = player.transform.position;
+        Vector3 end = start + dir * distance;
+
+        float t = 0f;
+
         while (t < 1f)
         {
-            t += Time.deltaTime * inv;
+            t += Time.deltaTime / Mathf.Max(0.0001f, duration);
             player.transform.position = Vector3.Lerp(start, end, t);
-
-            // ★關鍵：手動位移期間，保持 Agent 的 nextPosition 跟上 Transform
-            if (!agent.updatePosition) agent.nextPosition = player.transform.position;
-
             yield return null;
         }
     }
@@ -209,28 +196,5 @@ public class OpenDoorController : MonoBehaviour
     {
         foreach (var c in playerControlScripts)
             if (c) c.enabled = enable;
-    }
-
-    // 以 desired 為目標，先貼回 NavMesh；不行就沿著反方向逐步回縮找最近可站點
-    bool TryMakeSafeInsidePoint(Vector3 desired, float maxSnap, out Vector3 safe)
-    {
-        if (NavMesh.SamplePosition(desired, out var hit, maxSnap, NavMesh.AllAreas))
-        { safe = hit.position; return true; }
-
-        Vector3 back = (player.transform.position - desired); back.y = 0;
-        for (int i = 1; i <= 3; i++)
-        {
-            var p = desired + back.normalized * (0.3f * i); // 每次回縮 0.3m
-            if (NavMesh.SamplePosition(p, out hit, 0.5f, NavMesh.AllAreas))
-            { safe = hit.position; return true; }
-        }
-        safe = Vector3.zero;
-        return false;
-    }
-
-    void SafeWarpTo(Vector3 worldPoint)
-    {
-        if (NavMesh.SamplePosition(worldPoint, out var hit, 0.6f, NavMesh.AllAreas))
-            agent.Warp(hit.position);
     }
 }

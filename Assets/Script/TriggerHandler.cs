@@ -16,8 +16,6 @@ public class TriggerHandler : MonoBehaviour
 
     public ClockTimelineController timelineController;
 
-    bool played;
-
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
@@ -42,8 +40,6 @@ public class TriggerHandler : MonoBehaviour
         {
             hasTriggered = true;
 
-            if (played) return;
-            played = true;
             timelineController.PlaySequence();
         }
     }
