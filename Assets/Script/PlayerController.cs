@@ -97,32 +97,26 @@ public class PlayerController : MonoBehaviour
     // 控制角色面向移動方向
     private void HandleRotation()
     {
-        
+
+        if (!isMove || agent == null || agent.isStopped) return;
+
         if (agent.hasPath && agent.velocity.sqrMagnitude > 0.1f)
         {
             isRotating = true;
-
-            // 計算目標方向
             Vector3 direction = agent.steeringTarget - transform.position;
             direction.y = 0;
-
-            // 平滑旋轉至目標方向
-            if (direction.magnitude > 0.1f)
+            if (direction.sqrMagnitude > 0.01f)
             {
                 Quaternion targetRotation = Quaternion.LookRotation(direction);
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             }
         }
         else if (isRotating)
-        {   
-            // 停止旋轉
+        {
             isRotating = false;
-
-            // 若接近目標點且幾乎停止，重置路徑
-            if (agent.velocity.sqrMagnitude < 0.01f && agent.remainingDistance < stoppingDistance)
-            {
+            // 放寬一點容差，確保能如期清路徑
+            if (agent.remainingDistance <= stoppingDistance + 0.05f)
                 agent.ResetPath();
-            }
         }
     }
 
@@ -185,7 +179,7 @@ public class PlayerController : MonoBehaviour
                     StopMovementHard();
                     Vector3 look = interactionPoint; look.y = transform.position.y;
                     transform.LookAt(look);
-                    interactable.Interact();
+                    wifeTarget.Interact(); // ← 用 wifeTarget，而不是 interactable
                 }
             }
         }
@@ -231,19 +225,18 @@ public class PlayerController : MonoBehaviour
         agent.isStopped = false;
         agent.SetDestination(point);
 
-        // 等待到達目標點 (加 0.1f 容錯距離)
         while (Vector3.Distance(transform.position, point) > agent.stoppingDistance + 0.1f)
-        {
             yield return null;
-        }
 
-        // 面向互動物件
-        Vector3 look = point; look.y = transform.position.y;
-        transform.LookAt(point);
+        // 面向互動物件（一次性轉向即可）
+        Vector3 look = point;
+        look.y = transform.position.y;
+        transform.LookAt(look);
 
-        //StopMovementHard();
+        // 關鍵：確實停車 + 清路徑，避免殘留旋轉
+        StopMovementHard(); // 這個方法裡有 isStopped=true + ResetPath() + 關走路動畫
 
-        // 執行互動邏輯
+        // 執行互動
         interactable.Interact();
     }
 

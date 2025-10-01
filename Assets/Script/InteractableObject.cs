@@ -48,10 +48,8 @@ public class InteractableObject : MonoBehaviour, IInteractable
             // 如果拾取的物品是鑰匙，且設定了對話節點，則觸發對話
             if (itemData.itemName == "key" && !dialogueKnotName.Equals("")) 
             {
-                //if (PlayerController.Instance != null) 
-                //{
-                //    PlayerController.Instance.StopMovementHard();
-                //}
+                PlayerController.Instance?.StopMovementHard(); // 停車+清路徑 → 不會慢旋轉
+                PlayerController.Instance.isMove = false;      // 暫時禁移動（避免亂點）
 
                 GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
             }
