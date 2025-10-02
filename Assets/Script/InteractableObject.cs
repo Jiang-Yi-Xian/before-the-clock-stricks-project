@@ -84,7 +84,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
             {
                 PlayerController.Instance?.StopMovementHard();
                 PlayerController.Instance.isMove = false;
-                GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+                //GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
             }
 
             onInteract?.Invoke();

@@ -525,8 +525,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 542576863}
-  fadeDuration: 3
-  fadeDelay: 3
+  fadeDuration: 2
+  fadeDelay: 2
   buttonText: {fileID: 2034157453}
   sizeIncrease: 5
   sizeAnimDuration: 0.12
@@ -728,8 +728,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canvasGroup: {fileID: 1022614676}
-  fadeDuration: 3
-  fadeDelay: 3
+  fadeDuration: 2
+  fadeDelay: 2
   buttonText: {fileID: 1637216806}
   sizeIncrease: 5
   sizeAnimDuration: 0.12

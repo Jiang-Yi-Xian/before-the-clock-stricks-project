@@ -6,8 +6,8 @@ public class ButtonFadeIn : MonoBehaviour, IPointerEnterHandler, IPointerExitHan
 {
     [Header("Fade")]
     public CanvasGroup canvasGroup;            // 拖你的按鈕上 CanvasGroup
-    public float fadeDuration = 3f;            // 淡入時間（秒）
-    public float fadeDelay = 3f;               // 淡入前等待時間（秒）
+    public float fadeDuration = 2f;            // 淡入時間（秒）
+    public float fadeDelay = 2f;               // 淡入前等待時間（秒）
 
     [Header("Text Hover")]
     public TextMeshProUGUI buttonText;         // 拖按鈕上的 TextMeshProUGUI

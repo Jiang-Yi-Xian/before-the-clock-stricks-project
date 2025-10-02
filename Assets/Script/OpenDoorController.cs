@@ -183,7 +183,7 @@ public class OpenDoorController : MonoBehaviour
             t += Time.deltaTime * inv;
             player.transform.position = Vector3.Lerp(start, end, t);
 
-            // ★關鍵：手動位移期間，保持 Agent 的 nextPosition 跟上 Transform
+            // ★ 關鍵：手動位移時讓 Agent 跟上 Transform（避免結束時被拉回）
             if (!agent.updatePosition) agent.nextPosition = player.transform.position;
 
             yield return null;
