@@ -109,25 +109,20 @@ public class PlayerController : MonoBehaviour
     {
 
         if (!isMove || agent == null || agent.isStopped) return;
+        if (!agent.hasPath) return;
 
-        if (agent.hasPath && agent.velocity.sqrMagnitude > 0.1f)
-        {
-            isRotating = true;
-            Vector3 direction = agent.steeringTarget - transform.position;
-            direction.y = 0;
-            if (direction.sqrMagnitude > 0.01f)
-            {
-                Quaternion targetRotation = Quaternion.LookRotation(direction);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-            }
-        }
-        else if (isRotating)
-        {
-            isRotating = false;
-            // 放寬一點容差，確保能如期清路徑
-            if (agent.remainingDistance <= stoppingDistance + 0.05f)
-                agent.ResetPath();
-        }
+        // 1) 優先用期望速度方向
+        Vector3 vel = agent.desiredVelocity; vel.y = 0f;
+
+        // 2) 速度很小時，用「朝向最終目的地」的方向（不是 steeringTarget）
+        if (vel.sqrMagnitude < 0.0004f)
+            vel = (agent.destination - transform.position);
+
+        vel.y = 0f;
+        if (vel.sqrMagnitude < 0.0004f) return;
+
+        Quaternion target = Quaternion.LookRotation(vel.normalized, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, target, rotationSpeed * Time.deltaTime);
     }
 
     // 滑鼠點擊事件
@@ -139,44 +134,45 @@ public class PlayerController : MonoBehaviour
         // 從滑鼠位置發射 Ray
         Ray ray = maincam.ScreenPointToRay(Mouse.current.position.ReadValue());
 
-        // 1) 互動優先：射到互動物 → 靠近互動點再 Interact（沿用你原本 MoveAndInteract/近距離直接互動）
+        // 1) 互動優先：命中互動物 → 近距離直接互動；遠距離才導航過去
         if (Physics.Raycast(ray, out RaycastHit interactHit, Mathf.Infinity, interactableMask, QueryTriggerInteraction.Collide))
         {
             var interactable = interactHit.collider.GetComponentInParent<IInteractable>();
             if (interactable != null)
             {
+                // 互動點先貼回 NavMesh（避免終點貼邊導致側移）
                 Vector3 interactionPoint = interactable.GetInteractionPoint();
+                if (!NavMesh.SamplePosition(interactionPoint, out var ip, 0.6f, NavMesh.AllAreas))
+                    return;
 
+                // 近距離：不移動，直接面向＋互動
                 float needMoveDist = agent.stoppingDistance + interactArriveTolerance;
-                float dist = Vector3.Distance(transform.position, interactionPoint);
-
-                if (dist > needMoveDist)
-                {
-                    // NEW: 互動點貼到 NavMesh，半徑依場景調整（0.4~0.8f 常見）
-                    if (!NavMesh.SamplePosition(interactionPoint, out var ip, 0.6f, NavMesh.AllAreas))
-                        return;
-
-                    // NEW: 可選—要求完整路徑，避免末端貼邊造成側移
-                    var path = new NavMeshPath();
-                    if (!agent.CalculatePath(ip.position, path) || path.status != NavMeshPathStatus.PathComplete)
-                        return;
-
-                    agent.isStopped = false;
-                    agent.updatePosition = true;
-                    agent.updateRotation = false; // 保持由 HandleRotation 控轉身
-                    agent.SetDestination(ip.position);
-                    StartCoroutine(MoveAndInteract(ip.position, interactable));
-                }
-                else
+                float dist = Vector3.Distance(transform.position, ip.position);
+                if (dist <= needMoveDist)
                 {
                     StopMovementHard();
-                    Vector3 look = interactionPoint; look.y = transform.position.y;
+                    Vector3 look = ip.position; look.y = transform.position.y;
                     transform.LookAt(look);
                     interactable.Interact();
+                    return;
                 }
-                return;
+
+                // 遠距離：要求完整路徑再走，避免末端貼邊造成橫移
+                var path = new NavMeshPath();
+                if (!agent.CalculatePath(ip.position, path) || path.status != NavMeshPathStatus.PathComplete)
+                    return;
+
+                agent.isStopped = false;
+                agent.updatePosition = true;
+                agent.updateRotation = false; // 旋轉交由 HandleRotation 控制
+                agent.SetDestination(ip.position);
+
+                // 抵達後由協程處理「最後貼點 + 清路徑 + 互動」
+                StartCoroutine(MoveAndInteract(ip.position, interactable));
+                return; // 命中互動物後結束，避免再落到地面分支
             }
         }
+
         // 2) 沒打到互動物 → 嘗試地面移動（但先做互動封鎖圈檢查）
         if (!Physics.Raycast(ray, out RaycastHit groundHit, Mathf.Infinity, groundMask, QueryTriggerInteraction.Ignore))
             return;
@@ -272,6 +268,9 @@ public class PlayerController : MonoBehaviour
 
         // 關鍵：確實停車 + 清路徑，避免殘留旋轉
         StopMovementHard(); // 這個方法裡有 isStopped=true + ResetPath() + 關走路動畫
+
+        if (NavMesh.SamplePosition(point, out var snap, 0.3f, NavMesh.AllAreas))
+            agent.Warp(snap.position);
 
         // 執行互動
         interactable.Interact();

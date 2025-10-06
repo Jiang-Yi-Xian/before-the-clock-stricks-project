@@ -76,8 +76,7 @@ public class OpenDoorController : MonoBehaviour
         // 先把理想終點貼回 NavMesh（找不到就不要推太深）
         if (!TryMakeSafeInsidePoint(desiredEnd, 1.0f, out var safeEnd))
         {
-            // 找不到安全點，保守：不要推，或改成只小推 0.5m（自行擇一）
-            // yield break; // 不推
+            // 找不到安全點：保守處理（小推半步並再次取樣）
             safeEnd = player.transform.position + dir * 0.5f; // 小推半步（可選）
             if (NavMesh.SamplePosition(safeEnd, out var snap, 0.6f, NavMesh.AllAreas))
                 safeEnd = snap.position;
@@ -99,11 +98,14 @@ public class OpenDoorController : MonoBehaviour
         // 8) 還權給 NavMeshAgent（避免回彈：warp 到玩家現位置） 
         if (!disableClickOnly)
         {
-            SafeWarpTo(safeEnd);
+            if (NavMesh.SamplePosition(safeEnd, out var snap, 0.6f, NavMesh.AllAreas))
+                agent.Warp(snap.position);
+            else
+                agent.Warp(player.transform.position); // 次選
 
-            agent.nextPosition = safeEnd;
+            agent.nextPosition = agent.transform.position;
             agent.updatePosition = true;
-            agent.updateRotation = false; // ★保持由你自己的 HandleRotation 控轉身
+            agent.updateRotation = false; // 一律保持由 PlayerController 控制轉向
             agent.isStopped = false;
             agent.ResetPath();
         }
@@ -127,7 +129,7 @@ public class OpenDoorController : MonoBehaviour
     {
         agent.isStopped = false;
         agent.updatePosition = true;
-        agent.updateRotation = true;
+        agent.updateRotation = false;
         agent.SetDestination(targetPos); // 等抵達 
 
         while (Vector3.Distance(player.transform.position, targetPos) > stopDistance)
