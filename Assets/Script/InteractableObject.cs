@@ -88,7 +88,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
                 if (PlayerController.Instance.TryGetComponent<Animator>(out var anim))
                     anim.applyRootMotion = false;
 
-                GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+                //GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
             }
 
             onInteract?.Invoke();
