@@ -95,6 +95,9 @@ public class OpenDoorController : MonoBehaviour
         }
         playerAnimator.SetBool("iswalk", false);
 
+        // 9) 播放輪迴 Timeline
+        yield return StartCoroutine(timelineController.PlaySequenceAndWait());
+
         // 8) 還權給 NavMeshAgent（避免回彈：warp 到玩家現位置） 
         if (!disableClickOnly)
         {
@@ -111,10 +114,6 @@ public class OpenDoorController : MonoBehaviour
         }
 
         PlayerController.Instance?.LockAnimator(false);
-
-        // 9) 播放輪迴 Timeline
-        timelineController.PlaySequence();
-
         PlayerController.Instance.isMove = true;
 
         SetPlayerControls(true);

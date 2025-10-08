@@ -153,6 +153,7 @@ public class PlayerController : MonoBehaviour
                     StopMovementHard();
                     Vector3 look = ip.position; look.y = transform.position.y;
                     transform.LookAt(look);
+
                     interactable.Interact();
                     return;
                 }

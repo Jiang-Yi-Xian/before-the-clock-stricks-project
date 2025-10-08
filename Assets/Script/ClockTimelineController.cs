@@ -60,4 +60,9 @@ public class ClockTimelineController : MonoBehaviour
     {
         hasFadedOut = false;
     }
+
+    public IEnumerator PlaySequenceAndWait() 
+    {
+        yield return StartCoroutine(PlayTimelineSequence());
+    }
 }
