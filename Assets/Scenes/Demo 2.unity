@@ -2891,7 +2891,7 @@ Transform:
   m_GameObject: {fileID: 322471241}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.645, y: 0, z: -2.073}
+  m_LocalPosition: {x: -0.2, y: 0, z: -2.073}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9672,7 +9672,7 @@ Transform:
   m_GameObject: {fileID: 1870985619}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.42, y: 0.061, z: -2.06}
+  m_LocalPosition: {x: 0.79, y: 0.061, z: -3}
   m_LocalScale: {x: 0.5026083, y: 0.02794182, z: 1.541006}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9692,7 +9692,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dialogueKnotName: SawWifeFallOnGround/SawWifeDown
   intervalTrigger: 1
-  intervalTime: 2.5
+  intervalTime: 1.5
   triggerOnce: 1
   timelineController: {fileID: 0}
 --- !u!65 &1870985622
@@ -12368,7 +12368,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2232085148092323242, guid: 4ea6ea93dc7d135408e0a829daa44395, type: 3}
       propertyPath: m_IsTrigger
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5226280311345331327, guid: 4ea6ea93dc7d135408e0a829daa44395, type: 3}
       propertyPath: itemData
