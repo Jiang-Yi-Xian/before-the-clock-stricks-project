@@ -1,4 +1,5 @@
 using NUnit.Framework.Interfaces;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -75,30 +76,21 @@ public class InteractableObject : MonoBehaviour, IInteractable
     private void Pickup() 
     {
         var inventory = InventorySystem.Instance;
-        if (inventory != null)
-        {
-            inventory.AddItem(itemData);
-
-            // 例如鑰匙：可選擇觸發對話
-            if (itemData.itemName == "key" && !string.IsNullOrEmpty(dialogueKnotName))
-            {
-                PlayerController.Instance?.StopMovementHard();
-                PlayerController.Instance.isMove = false;
-
-                if (PlayerController.Instance.TryGetComponent<Animator>(out var anim))
-                    anim.applyRootMotion = false;
-
-                GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
-
-                PlayerController.Instance.isMove = true;
-            }
-
-            onInteract?.Invoke();
-            Destroy(gameObject);
-        }
-        else
+        if (inventory == null)
         {
             Debug.Log("InventorySystem No Find");
+            return;
+        }
+        if (PlayerController.Instance.TryGetComponent<Animator>(out var anim)) 
+        {
+            PlayerController.Instance.StopMovementHard();
+            PlayerController.Instance.isMove = false;
+
+            anim.SetTrigger("pickup");
+
+            PlayerController.Instance.LockAnimator(true);
+
+            PlayerController.Instance.StartCoroutine(WaitForPickupAnim(anim, inventory));
         }
     }
 
@@ -113,5 +105,24 @@ public class InteractableObject : MonoBehaviour, IInteractable
     public Vector3 GetInteractionPoint()
     {
         return interactionPoint != null ? interactionPoint.position : transform.position;
+    }
+
+    private IEnumerator WaitForPickupAnim(Animator anim, InventorySystem inventory) 
+    {
+        yield return new WaitForSeconds(1.333f);
+
+        inventory.AddItem(itemData);
+
+        if (itemData.itemName == "key" && !string.IsNullOrEmpty(dialogueKnotName)) 
+        {
+            //GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+        }
+
+        PlayerController.Instance.LockAnimator(false);
+        PlayerController.Instance.isMove = true;
+
+        onInteract?.Invoke();
+
+        Destroy(gameObject);
     }
 }

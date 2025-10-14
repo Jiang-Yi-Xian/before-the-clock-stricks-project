@@ -36,6 +36,11 @@ public class OpenDoorController : MonoBehaviour
 
     bool busy;
 
+    [SerializeField] LayerMask groundMask = ~0;     // 指到地板/地形 Layer
+    [SerializeField] float groundSnapTolerance = 0.25f; // NavMesh y 與地板 y 的允許差（公尺）
+    [SerializeField] float groundProbeUp = 2.0f;    // 從候選點往上抬起的射線起點高度
+    [SerializeField] float groundProbeDown = 5.0f;  // 向下量的距離
+
     public void BeginSequence()
     {
         if (busy || alreadyOpenedOnce) return;
@@ -77,10 +82,22 @@ public class OpenDoorController : MonoBehaviour
         if (!TryMakeSafeInsidePoint(desiredEnd, 1.0f, out var safeEnd))
         {
             // 找不到安全點：保守處理（小推半步並再次取樣）
-            safeEnd = player.transform.position + dir * 0.5f; // 小推半步（可選）
-            if (NavMesh.SamplePosition(safeEnd, out var snap, 0.6f, NavMesh.AllAreas))
+            safeEnd = player.transform.position + dir * 0.5f; // 小推半步
+            if (NavMesh.SamplePosition(safeEnd, out var snap, 0.6f, NavMesh.AllAreas)
+                && IsGoodNavPoint(snap.position)) // 回退取樣也需驗證
+            {
                 safeEnd = snap.position;
+            }
+            else
+            {
+                safeEnd = player.transform.position; // 不要帶著可疑點往下走
+            }
         }
+
+        if (safeEnd == Vector3.zero)
+            safeEnd = player.transform.position;
+
+        safeEnd = SnapYToGround(safeEnd);
 
         // 5) 播主角走路動畫，並把玩家往前移動（Root Motion 關閉，程式位移） 
         yield return StartCoroutine(MovePlayerToPointCo(safeEnd, walkIntoRoomDuration));
@@ -101,10 +118,7 @@ public class OpenDoorController : MonoBehaviour
         // 8) 還權給 NavMeshAgent（避免回彈：warp 到玩家現位置） 
         if (!disableClickOnly)
         {
-            if (NavMesh.SamplePosition(safeEnd, out var snap, 0.6f, NavMesh.AllAreas))
-                agent.Warp(snap.position);
-            else
-                agent.Warp(player.transform.position); // 次選
+            SafeWarpTo(safeEnd);
 
             agent.nextPosition = agent.transform.position;
             agent.updatePosition = true;
@@ -215,15 +229,23 @@ public class OpenDoorController : MonoBehaviour
     // 以 desired 為目標，先貼回 NavMesh；不行就沿著反方向逐步回縮找最近可站點
     bool TryMakeSafeInsidePoint(Vector3 desired, float maxSnap, out Vector3 safe)
     {
-        if (NavMesh.SamplePosition(desired, out var hit, maxSnap, NavMesh.AllAreas))
-        { safe = hit.position; return true; }
+        if (NavMesh.SamplePosition(desired, out var hit, maxSnap, NavMesh.AllAreas)
+        && IsGoodNavPoint(hit.position))
+        {
+            safe = hit.position;
+            return true;
+        }
 
         Vector3 back = (player.transform.position - desired); back.y = 0;
         for (int i = 1; i <= 3; i++)
         {
-            var p = desired + back.normalized * (0.3f * i); // 每次回縮 0.3m
-            if (NavMesh.SamplePosition(p, out hit, 0.5f, NavMesh.AllAreas))
-            { safe = hit.position; return true; }
+            var p = desired + back.normalized * (0.3f * i);
+            if (NavMesh.SamplePosition(p, out hit, 0.5f, NavMesh.AllAreas)
+                && IsGoodNavPoint(hit.position)) // [ADD]
+            {
+                safe = hit.position;
+                return true;
+            }
         }
         safe = Vector3.zero;
         return false;
@@ -232,6 +254,40 @@ public class OpenDoorController : MonoBehaviour
     void SafeWarpTo(Vector3 worldPoint)
     {
         if (NavMesh.SamplePosition(worldPoint, out var hit, 0.6f, NavMesh.AllAreas))
-            agent.Warp(hit.position);
+        {
+            //Warp 前先把 y 貼到地板，再驗證
+            Vector3 candidate = SnapYToGround(hit.position); 
+            if (IsGoodNavPoint(candidate))  
+            {
+                agent.Warp(candidate);
+            }
+        }
+    }
+
+    bool IsGoodNavPoint(Vector3 candidate)
+    {
+        // 1) 物理往下打，量真正的地板高度（必須命中）
+        Vector3 from = candidate + Vector3.up * groundProbeUp;
+        if (!Physics.Raycast(from, Vector3.down, out var hit, groundProbeUp + groundProbeDown, groundMask))
+            return false;
+
+        float groundY = hit.point.y;
+
+        // 允許的 NavMesh 與地板高度差（避免採到地板下的三角面）
+        if (Mathf.Abs(candidate.y - groundY) > groundSnapTolerance)
+            return false;
+
+        // 2) 可達性：需完整可達，避免穿牆/門縫
+        var path = new NavMeshPath();
+        if (!agent.CalculatePath(candidate, path)) return false;
+        return path.status == NavMeshPathStatus.PathComplete;
+    }
+
+    Vector3 SnapYToGround(Vector3 p)
+    {
+        Vector3 from = p + Vector3.up * groundProbeUp;
+        if (Physics.Raycast(from, Vector3.down, out var hit, groundProbeUp + groundProbeDown, groundMask))
+            p.y = hit.point.y;
+        return p;
     }
 }
