@@ -133,6 +133,8 @@ public class OpenDoorController : MonoBehaviour
         SetPlayerControls(true);
         alreadyOpenedOnce = true;
 
+        TimeLineTrigger.Instance.OnPlayerEnterDoor();
+
         // 若不想限制可移除此行
         busy = false;
     }

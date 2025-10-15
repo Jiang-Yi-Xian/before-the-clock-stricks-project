@@ -31,6 +31,8 @@ public class DialogueManager : MonoBehaviour
 
     private Coroutine autoContinue;
 
+    private float nextLineExtraDelay = 0f; // 由 #delay= 標籤設定的額外延遲（單位：秒）
+
     private void Awake()
     {
         foreach (var entry in inkStories)
@@ -138,7 +140,7 @@ public class DialogueManager : MonoBehaviour
             if (autoContinue != null)
                 StopCoroutine(autoContinue);
 
-            autoContinue = StartCoroutine(AutoContinueNextLine(line));
+            autoContinue = StartCoroutine(AutoContinueNextLine(line, nextLineExtraDelay));
         }
         else if (story.currentChoices.Count > 0)
         {
@@ -168,7 +170,7 @@ public class DialogueManager : MonoBehaviour
         return dialogueLine.Trim() == "" || dialogueLine.Trim() == "\n";
     }
 
-    private IEnumerator AutoContinueNextLine(string line)
+    private IEnumerator AutoContinueNextLine(string line, float extraDelay)
     {
         AudioSource voice = AudioManager.Instance.CurrentVoiceSource;
         SubtitleData subtitleData = AudioManager.Instance.CurrentSubtitleData;
@@ -206,7 +208,7 @@ public class DialogueManager : MonoBehaviour
                 float endTime = voice.clip.length;
                 float remain = Mathf.Clamp(endTime - lastTime, 0.2f, 10f); // 最短停 0.2 秒，最多 10 秒
 
-                yield return new WaitForSeconds(remain);
+                yield return new WaitForSeconds(remain + Mathf.Max(0f, extraDelay));
             }
 
             dialogueText.text = "";
@@ -219,9 +221,11 @@ public class DialogueManager : MonoBehaviour
             float timePerChar = subtitleData != null ? subtitleData.timePerCharacter : timePerCharacter;
             float delay = subtitleData != null ? subtitleData.sentenceEndDelay : sentenceEndDelay;
 
-            float waitTime = (line.Length * timePerChar) + delay;
+            float waitTime = (line.Length * timePerChar) + delay + Mathf.Max(0f, extraDelay);
             yield return new WaitForSeconds(waitTime);
         }
+
+        nextLineExtraDelay = 0f;
 
         ContinueOrExitStory();
     }
@@ -238,6 +242,13 @@ public class DialogueManager : MonoBehaviour
             else if (tag == "allow_move" && playerController != null)
             {
                 playerController.isMove = true;
+            }
+            // 解析 delay
+            else if (tag.StartsWith("delay="))
+            {
+                var val = tag.Substring("delay=".Length);
+                if (float.TryParse(val, out var sec) && sec >= 0f)
+                    nextLineExtraDelay = sec;
             }
         }
     }
