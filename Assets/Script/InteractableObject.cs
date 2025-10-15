@@ -115,7 +115,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
 
         if (itemData.itemName == "key" && !string.IsNullOrEmpty(dialogueKnotName)) 
         {
-            //GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
+            GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
         }
 
         PlayerController.Instance.LockAnimator(false);
