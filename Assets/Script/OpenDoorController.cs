@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Playables;
+using UnityEngine.UI;
 public class OpenDoorController : MonoBehaviour
 {
     [Header("Refs")]
@@ -41,6 +42,9 @@ public class OpenDoorController : MonoBehaviour
     [SerializeField] float groundProbeUp = 2.0f;    // 從候選點往上抬起的射線起點高度
     [SerializeField] float groundProbeDown = 5.0f;  // 向下量的距離
 
+    [SerializeField] private InventoryAnim inventoryAnim;
+    [SerializeField] private GameObject inventoryButton;
+
     public void BeginSequence()
     {
         if (busy || alreadyOpenedOnce) return;
@@ -54,6 +58,12 @@ public class OpenDoorController : MonoBehaviour
         SetPlayerControls(false);
         PlayerController.Instance.StopMovementHard();
         PlayerController.Instance.isMove = false;
+
+        if (inventoryAnim != null && inventoryButton != null)
+        {
+            inventoryAnim.HideInventory();
+            inventoryButton.SetActive(false);
+        }
 
         // 2) 導航到互動點（沿用你既有的協程也可以，見下方「替代：使用 MoveAndInteract」） 
         yield return StartCoroutine(MoveToPointCo(interactionPoint.position)); // 面向門 
@@ -134,6 +144,12 @@ public class OpenDoorController : MonoBehaviour
         alreadyOpenedOnce = true;
 
         TimeLineTrigger.Instance.OnPlayerEnterDoor();
+
+        if (inventoryAnim != null)
+        {
+            inventoryButton.SetActive(true);
+            inventoryAnim.HideInventory();  
+        }
 
         // 若不想限制可移除此行
         busy = false;

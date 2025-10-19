@@ -2182,6 +2182,8 @@ MonoBehaviour:
   groundSnapTolerance: 0.25
   groundProbeUp: 2
   groundProbeDown: 5
+  inventoryAnim: {fileID: 0}
+  inventoryButton: {fileID: 0}
 --- !u!4 &112957981
 Transform:
   m_ObjectHideFlags: 0
@@ -3767,6 +3769,8 @@ MonoBehaviour:
   groundSnapTolerance: 0.25
   groundProbeUp: 2
   groundProbeDown: 5
+  inventoryAnim: {fileID: 42294258}
+  inventoryButton: {fileID: 1731918449}
 --- !u!1 &418044717
 GameObject:
   m_ObjectHideFlags: 0
