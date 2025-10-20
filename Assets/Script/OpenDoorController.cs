@@ -151,6 +151,11 @@ public class OpenDoorController : MonoBehaviour
             inventoryAnim.HideInventory();  
         }
 
+        if (LoopTimer.Instance != null)
+        {
+            LoopTimer.Instance.StartTimer();
+        }
+
         // 若不想限制可移除此行
         busy = false;
     }

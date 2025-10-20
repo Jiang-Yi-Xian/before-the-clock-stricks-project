@@ -20,7 +20,7 @@ public class LoopManager : MonoBehaviour
         LoopMemoryManager.Instance.AddMemory("SaveWife");
         LoopTimer.Instance.ResetTimer();
 
-        LoopMemoryManager.Instance.spawnPosition = new Vector3(1.4f, 0.0f, -2.9f);
+        LoopMemoryManager.Instance.spawnPosition = new Vector3(1.57f, 0.022f, -2.94f);
         LoopMemoryManager.Instance.spawnRotation = new Vector3(0f, -90f, 0f);
         LoopMemoryManager.Instance.forceRespawnThisLoop = true;
         LoopMemoryManager.Instance.activeCameraName = "MainRoomCamera";
