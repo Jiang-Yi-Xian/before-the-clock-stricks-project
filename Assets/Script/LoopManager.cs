@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 public class LoopManager : MonoBehaviour
 {
     public static LoopManager Instance;
+    public PlayerController playerController;
 
     private void Awake()
     {
@@ -20,8 +21,6 @@ public class LoopManager : MonoBehaviour
         LoopMemoryManager.Instance.AddMemory("SaveWife");
         LoopTimer.Instance.ResetTimer();
 
-        LoopMemoryManager.Instance.spawnPosition = new Vector3(1.57f, 0.022f, -2.94f);
-        LoopMemoryManager.Instance.spawnRotation = new Vector3(0f, -90f, 0f);
         LoopMemoryManager.Instance.forceRespawnThisLoop = true;
         LoopMemoryManager.Instance.activeCameraName = "MainRoomCamera";
 
@@ -32,6 +31,9 @@ public class LoopManager : MonoBehaviour
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
             CameraManager.Instance.SwitchTo(LoopMemoryManager.Instance.activeCameraName);
+
+            playerController.transform.position = LoopMemoryManager.Instance.spawnPosition;
+            playerController.transform.rotation = Quaternion.Euler(LoopMemoryManager.Instance.spawnRotation);
         }));
     }
 }

@@ -8,8 +8,8 @@ public class LoopMemoryManager : MonoBehaviour
     public int loopCount = 0;
     private HashSet<string> memories = new HashSet<string>();
 
-    public Vector3 spawnPosition = new Vector3(1.57f, 0.022f, -2.94f);
-    public Vector3 spawnRotation = new Vector3(0f, -90f, 0f);
+    [SerializeField] public Vector3 spawnPosition = new Vector3(1.57f, 0.022f, -2.94f);
+    [SerializeField] public Vector3 spawnRotation = new Vector3(0f, -90f, 0f);
     public string activeCameraName = "HallwayCam";
     public bool forceRespawnThisLoop = false;
 
