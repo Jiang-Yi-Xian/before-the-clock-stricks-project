@@ -77,6 +77,16 @@ public class LoopManager : MonoBehaviour
                 Debug.LogWarning("[LoopManager] 找不到 Player 物件！");
             }
 
+            if (LoopManager.Instance != null) 
+            {
+                LoopTimer.Instance.StartTimer();
+            }
+
+            if (TimeLineTrigger.Instance != null) 
+            {
+                TimeLineTrigger.Instance.OnPlayerEnterDoor();
+            }
+
             // 解除事件註冊（避免重複觸發）
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }

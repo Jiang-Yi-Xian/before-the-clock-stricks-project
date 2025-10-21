@@ -37,6 +37,7 @@ public class TimeLineTrigger : MonoBehaviour
     void Awake()
     {
         Instance = this;
+
     }
 
     public void OnPlayerEnterDoor()
