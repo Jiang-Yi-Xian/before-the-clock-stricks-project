@@ -6,8 +6,8 @@ public class PlayerSpawnHandler : MonoBehaviour
     {
         if (LoopMemoryManager.Instance != null)
         {
-            transform.position = LoopMemoryManager.Instance.spawnPosition;
-            transform.rotation = Quaternion.Euler(LoopMemoryManager.Instance.spawnRotation);
+            //transform.position = LoopMemoryManager.Instance.spawnPosition;
+            //transform.rotation = Quaternion.Euler(LoopMemoryManager.Instance.spawnRotation);
 
             CameraManager.Instance.SwitchTo(LoopMemoryManager.Instance.activeCameraName);
         }

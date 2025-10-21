@@ -437,7 +437,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a8b783fb3bd6bf4418d6384f4f7a464b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 1565823322}
+  player: {fileID: 1565823319}
 --- !u!1 &54099926 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5070501504207777657, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
@@ -2716,7 +2716,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loopCount: 0
-  spawnPosition: {x: 1.57, y: 0.022, z: -2.94}
+  spawnPosition: {x: 1.57, y: 0, z: -2.9}
   spawnRotation: {x: 0, y: -90, z: 0}
   activeCameraName: HallwayCam
   forceRespawnThisLoop: 0
@@ -13619,16 +13619,16 @@ SceneRoots:
   - {fileID: 1657641367}
   - {fileID: 446840310}
   - {fileID: 112957981}
-  - {fileID: 243529173}
   - {fileID: 1592742577}
   - {fileID: 1401393405}
   - {fileID: 813617820}
   - {fileID: 45567337}
+  - {fileID: 243529173}
+  - {fileID: 1583206486}
+  - {fileID: 237319587}
   - {fileID: 1224793093}
   - {fileID: 1235267334}
   - {fileID: 1299953126}
-  - {fileID: 237319587}
-  - {fileID: 1583206486}
   - {fileID: 1232641287}
   - {fileID: 504782442}
   - {fileID: 1037368991}
