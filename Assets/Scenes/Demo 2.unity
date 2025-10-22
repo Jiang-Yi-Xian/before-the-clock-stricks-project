@@ -1961,6 +1961,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f4b5d7690ecd62459d7e84532f9a1a7, type: 3}
       insertIndex: -1
       addedObject: {fileID: 738376685}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4f4b5d7690ecd62459d7e84532f9a1a7, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 738376687}
   m_SourcePrefab: {fileID: 100100000, guid: 4f4b5d7690ecd62459d7e84532f9a1a7, type: 3}
 --- !u!1001 &88729837
 PrefabInstance:
@@ -2045,6 +2048,22 @@ PrefabInstance:
     - target: {fileID: -1172154713819661526, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0.0105
+      objectReference: {fileID: 0}
+    - target: {fileID: -1172154713819661526, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -1172154713819661526, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1172154713819661526, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -1172154713819661526, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -756213411785431906, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       propertyPath: m_Layer
@@ -5234,6 +5253,18 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &738376687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 738376682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3fca2b37bbec0f14994c6ff3e407ea1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &813617819
 GameObject:
   m_ObjectHideFlags: 0
@@ -11266,6 +11297,61 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &1925913822
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1925913824}
+  - component: {fileID: 1925913823}
+  m_Layer: 0
+  m_Name: DoorFeedBack
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1925913823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1925913822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca2e6edb69b1b934599652e8181403ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  door: {fileID: 402925289}
+  hingeAxis: 2
+  useLocalRotation: 1
+  knockShakeAngle: 2.5
+  kickShakeAngle: 6
+  shakeDuration: 0.1
+  kicksToBreak: 3
+  openAngle: -90
+  openDuration: 0.2
+  closedYaw: 95
+  captureOnStart: 1
+--- !u!4 &1925913824
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1925913822}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.136, y: 0.375, z: -3.467}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1989197900 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -5726945063556395064, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
@@ -13931,3 +14017,4 @@ SceneRoots:
   - {fileID: 2107942285}
   - {fileID: 1544851829}
   - {fileID: 570668786}
+  - {fileID: 1925913824}
