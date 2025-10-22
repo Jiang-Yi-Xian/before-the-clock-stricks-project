@@ -27,11 +27,14 @@ public class InkExternalFunction
         story.BindExternalFunction("Audio", (string character, string audioId) => {
             AudioManager.Instance.PlayVoiceLine(character, audioId);
         });
+
+        story.BindExternalFunction("TriggerAnim", (string key) => PoliceEventController.Instance.OnTriggerAnim(key));
     }
 
     public void Unbind(Story story)
     {
         story.UnbindExternalFunction("Audio");
         story.UnbindExternalFunction("HasMemory");
+        story.UnbindExternalFunction("TriggerAnim");
     }
 }

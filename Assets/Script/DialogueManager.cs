@@ -33,6 +33,8 @@ public class DialogueManager : MonoBehaviour
 
     private float nextLineExtraDelay = 0f; // 由 #delay= 標籤設定的額外延遲（單位：秒）
 
+    private bool interrupted = false;
+
     private void Awake()
     {
         foreach (var entry in inkStories)
@@ -126,6 +128,8 @@ public class DialogueManager : MonoBehaviour
 
     private void ContinueOrExitStory()
     {
+        if (interrupted) return;
+
         if (story.canContinue)
         {
             string line = story.Continue();
@@ -250,6 +254,24 @@ public class DialogueManager : MonoBehaviour
                 if (float.TryParse(val, out var sec) && sec >= 0f)
                     nextLineExtraDelay = sec;
             }
+        }
+    }
+
+    public void InterruptDialogue(string jumpKnot = "END") 
+    {
+        interrupted = true;
+
+        if (autoContinue != null)
+        {
+            StopCoroutine(autoContinue);
+            autoContinue = null;
+        }
+
+        StartCoroutine(ExitDialogue());
+
+        if (!string.IsNullOrEmpty(jumpKnot) && story != null)
+        {
+            story.ChoosePathString(jumpKnot);
         }
     }
 }
