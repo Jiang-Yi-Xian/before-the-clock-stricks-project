@@ -17,6 +17,20 @@ public class WifeInteractable : MonoBehaviour, IInteractable
         return interactionPoint != null ? interactionPoint.position : transform.position;
     }
 
+    public bool GetInteractionForward(out Vector3 forward)
+    {
+        // 若有指定方向點 → 回傳它的 forward
+        if (interactionPoint != null)
+        {
+            forward = interactionPoint.forward;
+            return true;
+        }
+
+        // 否則就直接用物件本身的 forward（例如門、人物）
+        forward = transform.forward;
+        return true;
+    }
+
     public void Interact()
     {
         Debug.Log("Wife 被互動了，但沒有指定物品。");

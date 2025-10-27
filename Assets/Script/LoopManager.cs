@@ -87,6 +87,11 @@ public class LoopManager : MonoBehaviour
                 TimeLineTrigger.Instance.OnPlayerEnterDoor();
             }
 
+            if (OpenDoorController.Instance.IsDooropened == false) 
+            {
+                OpenDoorController.Instance.IsDooropened = true;
+            }
+
             // 解除事件註冊（避免重複觸發）
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }

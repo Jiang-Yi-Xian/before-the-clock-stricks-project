@@ -5,6 +5,8 @@ using UnityEngine.Playables;
 using UnityEngine.UI;
 public class OpenDoorController : MonoBehaviour
 {
+    public static OpenDoorController Instance;
+
     [Header("Refs")]
     public Transform interactionPoint; // 門邊互動點 
     public Transform doorHinge; // 門的旋轉樞紐（local Y 旋轉） 
@@ -44,6 +46,13 @@ public class OpenDoorController : MonoBehaviour
 
     [SerializeField] private InventoryAnim inventoryAnim;
     [SerializeField] private GameObject inventoryButton;
+
+    public bool IsDooropened = false;
+
+    void Awake()
+    {
+        Instance = this;
+    }
 
     public void BeginSequence()
     {
@@ -158,6 +167,7 @@ public class OpenDoorController : MonoBehaviour
 
         // 若不想限制可移除此行
         busy = false;
+        IsDooropened = true;
     }
 
     // ---------- 小協程們 ---------- 

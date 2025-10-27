@@ -13,6 +13,8 @@ public class PoliceEventController : MonoBehaviour
     [SerializeField]
     private Animator Animator;
 
+    public bool isPoliceArrived = false;
+
     void Awake()
     {
         Instance = this;
@@ -23,6 +25,8 @@ public class PoliceEventController : MonoBehaviour
         GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
 
         if (timeline != null) timeline.Stop();
+
+        isPoliceArrived = true;
     }
 
     public void OnTriggerAnim(string key) 

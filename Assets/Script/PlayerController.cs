@@ -151,8 +151,20 @@ public class PlayerController : MonoBehaviour
                 if (dist <= needMoveDist)
                 {
                     StopMovementHard();
-                    Vector3 look = ip.position; look.y = transform.position.y;
-                    transform.LookAt(look);
+
+                    Quaternion targetRot = Quaternion.identity;
+                    if (interactable.GetInteractionForward(out Vector3 fwd))
+                    {
+                        fwd.y = 0;
+                        targetRot = Quaternion.LookRotation(fwd.normalized);
+                    }
+                    else
+                    {
+                        Vector3 look = ip.position; look.y = transform.position.y;
+                        targetRot = Quaternion.LookRotation((look - transform.position).normalized);
+                    }
+
+                    StartCoroutine(SmoothRotateTo(targetRot, 0.25f));
 
                     interactable.Interact();
                     return;
@@ -262,16 +274,24 @@ public class PlayerController : MonoBehaviour
         while (Vector3.Distance(transform.position, point) > agent.stoppingDistance + 0.1f)
             yield return null;
 
-        // 面向互動物件（一次性轉向即可）
-        Vector3 look = point;
-        look.y = transform.position.y;
-        transform.LookAt(look);
-
         // 關鍵：確實停車 + 清路徑，避免殘留旋轉
         StopMovementHard(); // 這個方法裡有 isStopped=true + ResetPath() + 關走路動畫
 
         if (NavMesh.SamplePosition(point, out var snap, 0.3f, NavMesh.AllAreas))
             agent.Warp(snap.position);
+
+        Quaternion targetRot = Quaternion.identity;
+        if (interactable.GetInteractionForward(out Vector3 fwd))
+        {
+            fwd.y = 0;
+            targetRot = Quaternion.LookRotation(fwd.normalized);
+        }
+        else
+        {
+            Vector3 look = point; look.y = transform.position.y;
+            targetRot = Quaternion.LookRotation((look - transform.position).normalized);
+        }
+        yield return StartCoroutine(SmoothRotateTo(targetRot, 0.25f));
 
         // 執行互動
         interactable.Interact();
@@ -294,5 +314,22 @@ public class PlayerController : MonoBehaviour
     public void LockAnimator(bool locked)
     {
         animatorLocked = locked;
+    }
+    public void TriggerPlayerAnim(string anim) 
+    {
+        animator.SetTrigger(anim);
+    }
+
+    private IEnumerator SmoothRotateTo(Quaternion targetRot, float duration)
+    {
+        Quaternion startRot = transform.rotation;
+        float t = 0f;
+        while (t < duration)
+        {
+            transform.rotation = Quaternion.Slerp(startRot, targetRot, t / duration);
+            t += Time.deltaTime;
+            yield return null;
+        }
+        transform.rotation = targetRot;
     }
 }
