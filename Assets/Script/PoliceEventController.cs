@@ -14,6 +14,7 @@ public class PoliceEventController : MonoBehaviour
     private Animator Animator;
 
     public bool isPoliceArrived = false;
+    public bool canInterrupt = false;
 
     void Awake()
     {
@@ -22,11 +23,13 @@ public class PoliceEventController : MonoBehaviour
 
     public void OnPoliceArrived() 
     {
+        isPoliceArrived = true;
+
+        if (SimpleDoorController.Instance.isDoorOpen) return;
+
         GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
 
         if (timeline != null) timeline.Stop();
-
-        isPoliceArrived = true;
     }
 
     public void OnTriggerAnim(string key) 
@@ -47,5 +50,10 @@ public class PoliceEventController : MonoBehaviour
         {
             yield return null;
         }
+    }
+
+    public void InterruptTrigger() 
+    {
+        canInterrupt = true;
     }
 }

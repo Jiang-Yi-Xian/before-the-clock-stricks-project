@@ -14,6 +14,8 @@ public class InkStoryEntry
 
 public class DialogueManager : MonoBehaviour
 {
+    public static DialogueManager Instance;
+
     [Header("Ink Stories")]
     [SerializeField] private InkStoryEntry[] inkStories;
 
@@ -37,6 +39,8 @@ public class DialogueManager : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
+
         foreach (var entry in inkStories)
         {
             if (!storyMap.ContainsKey(entry.storyName) && entry.inkJson != null)

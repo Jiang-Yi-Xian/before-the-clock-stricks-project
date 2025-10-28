@@ -25,3 +25,7 @@ EXTERNAL TriggerAnim(key)
 ...#delay=3
 ~ TriggerAnim("onkickdoor")
 -> END
+
+== Interrupt ==
+hi
+-> END

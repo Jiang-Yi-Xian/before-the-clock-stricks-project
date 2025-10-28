@@ -144,6 +144,24 @@ public class InteractableObject : MonoBehaviour, IInteractable
 
     private void OpenDoor() 
     {
+        if (OpenDoorController.Instance.IsDooropened == false) return;
+
         PlayerController.Instance.TriggerPlayerAnim("openingDoor");
+
+        if (SimpleDoorController.Instance.isDoorOpen)
+        {
+            SimpleDoorController.Instance.CloseDoor();
+        }
+        else 
+        {
+            SimpleDoorController.Instance.OpenDoor();
+        }
+
+        if (PoliceEventController.Instance.canInterrupt) 
+        {
+            DialogueManager.Instance.InterruptDialogue("Interrupt");
+
+            PoliceEventController.Instance.canInterrupt = false;
+        }
     }
 }

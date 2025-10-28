@@ -2141,6 +2141,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -5579398939894184472, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       insertIndex: -1
       addedObject: {fileID: 402925301}
+    - targetCorrespondingSourceObject: {fileID: -5579398939894184472, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 402925302}
     - targetCorrespondingSourceObject: {fileID: -5726945063556395064, guid: 7d377440626d2e54db24ad80062f7d48, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1989197904}
@@ -3843,6 +3846,22 @@ MonoBehaviour:
   onInteract:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &402925302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 402925284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d091e7f1d27520f4ba46665d84763557, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doorHinge: {fileID: 402925289}
+  doorOpenAngle: -130
+  doorOpenDuration: 0.6
+  isDoorOpen: 0
 --- !u!1 &418044717
 GameObject:
   m_ObjectHideFlags: 0
@@ -4363,6 +4382,18 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
+        - m_Target: {fileID: 504782443}
+          m_TargetAssemblyTypeName: PoliceEventController, Assembly-CSharp
+          m_MethodName: InterruptTrigger
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!4 &504782442
 Transform:
   m_ObjectHideFlags: 0
@@ -4393,6 +4424,7 @@ MonoBehaviour:
   timeline: {fileID: 1232641286}
   Animator: {fileID: 738376684}
   isPoliceArrived: 0
+  canInterrupt: 0
 --- !u!1 &555744096
 GameObject:
   m_ObjectHideFlags: 0
@@ -9384,7 +9416,7 @@ Transform:
   m_GameObject: {fileID: 1537040437}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 2.01, y: 0, z: -2.66}
+  m_LocalPosition: {x: 2.1, y: 0, z: -2.28}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
