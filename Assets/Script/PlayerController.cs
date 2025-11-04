@@ -297,6 +297,41 @@ public class PlayerController : MonoBehaviour
         interactable.Interact();
     }
 
+    public IEnumerator MoveToStoryInteractionPoint(Transform targetPoint, float stopTolerance = 0.15f)
+    {
+        if (agent == null || targetPoint == null)
+            yield break;
+
+        // 停止原本滑鼠點擊移動行為（防止衝突）
+        isMove = false;
+        agent.isStopped = false;
+        agent.updatePosition = true;
+        agent.updateRotation = false;
+
+        // 設定路徑
+        agent.SetDestination(targetPoint.position);
+
+        // 等待到達指定點
+        while (Vector3.Distance(transform.position, targetPoint.position) > agent.stoppingDistance + stopTolerance)
+            yield return null;
+
+        // 停止移動
+        StopMovementHard();
+
+        // 校正站位（避免 NavMesh 誤差）
+        if (NavMesh.SamplePosition(targetPoint.position, out var snap, 0.3f, NavMesh.AllAreas))
+            agent.Warp(snap.position);
+
+        // 對齊方向
+        Vector3 lookDir = targetPoint.forward;
+        lookDir.y = 0f;
+        if (lookDir.sqrMagnitude > 0.01f)
+            yield return StartCoroutine(SmoothRotateTo(Quaternion.LookRotation(lookDir), 0.25f));
+
+        // 移動完成，恢復玩家可移動狀態
+        isMove = true;
+    }
+
     // 停止移動的方法
     public void StopMovementHard() 
     {

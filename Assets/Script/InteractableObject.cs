@@ -161,6 +161,8 @@ public class InteractableObject : MonoBehaviour, IInteractable
         {
             DialogueManager.Instance.InterruptDialogue("Interrupt");
 
+            StoryManager.Instance.TriggerEvent("PoliceEnter");
+
             PoliceEventController.Instance.canInterrupt = false;
         }
     }

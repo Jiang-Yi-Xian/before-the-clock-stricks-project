@@ -35,7 +35,7 @@ public class DialogueManager : MonoBehaviour
 
     private float nextLineExtraDelay = 0f; // 由 #delay= 標籤設定的額外延遲（單位：秒）
 
-    private bool interrupted = false;
+    public bool interrupted = false;
 
     private void Awake()
     {
@@ -263,8 +263,6 @@ public class DialogueManager : MonoBehaviour
 
     public void InterruptDialogue(string jumpKnot = "END") 
     {
-        interrupted = true;
-
         if (autoContinue != null)
         {
             StopCoroutine(autoContinue);
@@ -277,5 +275,7 @@ public class DialogueManager : MonoBehaviour
         {
             story.ChoosePathString(jumpKnot);
         }
+
+        interrupted = true;
     }
 }
