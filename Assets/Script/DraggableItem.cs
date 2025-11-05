@@ -100,6 +100,7 @@ public class DraggableItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 placed = true;
                 Vector3 interactionPoint = wifeTarget.GetInteractionPoint();
                 StartCoroutine(MoveAndGiveItem(interactionPoint, wifeTarget, itemData));
+                LoopMemoryManager.Instance.AddMemory("SavedWife");
             }
         }
     }

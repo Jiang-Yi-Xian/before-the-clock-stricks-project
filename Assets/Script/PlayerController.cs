@@ -90,12 +90,16 @@ public class PlayerController : MonoBehaviour
     {
         mouseClickInput.Enable();
         mouseClickInput.performed += OnMove;
+
+        StoryManager.Instance.OnStoryEventTrigger += HandleStoryEvent;
     }
 
     private void OnDisable()
     {
         mouseClickInput.performed -= OnMove;
         mouseClickInput.Disable();
+
+        StoryManager.Instance.OnStoryEventTrigger -= HandleStoryEvent;
     }
 
     // 需要切換相機時更新為新的相機
@@ -297,6 +301,20 @@ public class PlayerController : MonoBehaviour
         interactable.Interact();
     }
 
+    public IEnumerator MoveToStoryInteractionPoint(string pointName, float stopTolerance = 0.15f)
+    {
+        // 檢查互動點是否存在
+        var point = InteractionPointManager.Instance.GetPoint(pointName);
+        if (point == null)
+        {
+            Debug.LogWarning($"MoveToStoryInteractionPoint() 找不到互動點：{pointName}");
+            yield break;
+        }
+
+        // 呼叫原本的 Transform 版本
+        yield return StartCoroutine(MoveToStoryInteractionPoint(point.transform, stopTolerance));
+    }
+
     public IEnumerator MoveToStoryInteractionPoint(Transform targetPoint, float stopTolerance = 0.15f)
     {
         if (agent == null || targetPoint == null)
@@ -366,5 +384,20 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         transform.rotation = targetRot;
+    }
+
+    private void HandleStoryEvent(string eventName)
+    {
+        if (eventName == "PoliceEnter")
+        {
+            StartCoroutine(DelayBackForward());
+        }
+    }
+
+    private IEnumerator DelayBackForward()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        StartCoroutine(MoveToStoryInteractionPoint("LeadRoleBackForward"));
     }
 }

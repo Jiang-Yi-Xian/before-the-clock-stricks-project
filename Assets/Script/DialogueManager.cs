@@ -24,7 +24,7 @@ public class DialogueManager : MonoBehaviour
     private Dictionary<string, Story> storyMap = new Dictionary<string, Story>();
     private Story story;
     private int currentChoiceIndex = -1;
-    private bool dialoguePlaying = false;
+    public bool dialoguePlaying = false;
 
     private InkExternalFunction inkExternalFunctions;
 
@@ -102,6 +102,7 @@ public class DialogueManager : MonoBehaviour
 
     private void EnterDialogue(string knotNameWithStory)
     {
+        interrupted = false;
         if (dialoguePlaying) return;
 
         string[] parts = knotNameWithStory.Split('/');
@@ -261,7 +262,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
-    public void InterruptDialogue(string jumpKnot = "END") 
+    public void InterruptDialogue() 
     {
         if (autoContinue != null)
         {
@@ -269,13 +270,21 @@ public class DialogueManager : MonoBehaviour
             autoContinue = null;
         }
 
-        StartCoroutine(ExitDialogue());
-
-        if (!string.IsNullOrEmpty(jumpKnot) && story != null)
-        {
-            story.ChoosePathString(jumpKnot);
-        }
+        ExitDialogueImmediate();
 
         interrupted = true;
+    }
+
+    private void ExitDialogueImmediate()
+    {
+        //playerController.isMove = true;
+
+        dialoguePlaying = false;
+        GameEventsManager.Instance.dialogueEvents.DialogueFinished();
+
+        if (story != null)
+            story.ResetState();
+
+        interrupted = false;
     }
 }

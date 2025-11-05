@@ -29,9 +29,6 @@ public class PoliceController : MonoBehaviour
 
     private void UpdateAnimator()
     {
-        if(!DialogueManager.Instance.interrupted) return;
-        if (!PoliceEventController.Instance.canInterrupt) return;
-
         if (animator == null || agent == null)
             return;
 
@@ -65,20 +62,27 @@ public class PoliceController : MonoBehaviour
         if (faceDir.sqrMagnitude > 0.01f)
             transform.rotation = Quaternion.LookRotation(faceDir);
 
-        animator.CrossFadeInFixedTime("Idle", 0.2f);
+        animator.CrossFadeInFixedTime("idle", 0.2f);
     }
 
 
     private void HandleStoryEvent(string eventName)
     {
-        if (eventName == "PoliceEnter")
-            DelayEnterDoor();
+        if (eventName == "PoliceEnter") 
+        {
+            StartCoroutine(DelayEnterDoor());
+        }
     }
 
     private IEnumerator DelayEnterDoor() 
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(2f);
 
         StartCoroutine(MoveToInteractionPoint("PoliceEnterDoorNormal"));
+
+        yield return new WaitUntil(() => !DialogueManager.Instance.dialoguePlaying);
+        yield return new WaitForSeconds(0.5f);
+
+        GameEventsManager.Instance.dialogueEvents.EnterDialogue("PoliceEnter/PoliceEnter");
     }
 }

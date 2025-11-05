@@ -5391,12 +5391,12 @@ NavMeshAgent:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 738376682}
   m_Enabled: 1
-  m_AgentTypeID: -334000983
+  m_AgentTypeID: 0
   m_Radius: 0.2
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 80
-  m_AngularSpeed: 450
+  m_AngularSpeed: 300
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -8521,7 +8521,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeline: {fileID: 1232641286}
   useTimer: 1
-  delayInSeconds: 50
+  delayInSeconds: 45
   policeCharacter: {fileID: 738376682}
   requireEnterDoor: 0
 --- !u!1 &1235267332
@@ -9268,7 +9268,10 @@ MonoBehaviour:
     inkJson: {fileID: 4900000, guid: 5544dd24fd1d2494fbba36b516cc2753, type: 3}
   - storyName: PoliceArrivedAndKnockDoor
     inkJson: {fileID: 4900000, guid: 37f8554a7583af4469edaa0af69f2067, type: 3}
+  - storyName: PoliceEnter
+    inkJson: {fileID: 4900000, guid: 870bbd701faf06c40b9acb63f290e2c6, type: 3}
   playerController: {fileID: 1565823322}
+  dialoguePlaying: 0
   timePerCharacter: 0.06
   sentenceEndDelay: 0.5
   interrupted: 0
@@ -9572,7 +9575,7 @@ Transform:
   m_GameObject: {fileID: 1537040437}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 2.1, y: 0, z: -2.28}
+  m_LocalPosition: {x: 2.1, y: 0, z: -2.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9978,10 +9981,10 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.2
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 10
   avoidancePriority: 80
-  m_AngularSpeed: 450
+  m_AngularSpeed: 300
   m_StoppingDistance: 0
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
@@ -10494,7 +10497,7 @@ Transform:
   m_GameObject: {fileID: 1672507800}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.85, y: 0, z: -3.67}
+  m_LocalPosition: {x: 1.18, y: 0, z: -3.67}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
