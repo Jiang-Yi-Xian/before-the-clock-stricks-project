@@ -3,8 +3,6 @@ using System.Collections;
 
 public class SimpleDoorController : MonoBehaviour
 {
-    public static SimpleDoorController Instance;
-
     [Header("Refs")]
     public Transform doorHinge;
     public float doorOpenAngle = -90f;
@@ -12,10 +10,6 @@ public class SimpleDoorController : MonoBehaviour
 
     public bool isDoorOpen = false;
 
-    void Awake()
-    {
-        Instance = this;
-    }
 
     public void OpenDoor() 
     {

@@ -12,6 +12,9 @@ TagManager:
   - Trigger
   - EnterDoor
   - Wife
+  - BedroomDoor
+  - BathroomDoor
+  - RoomCameraSwitch
   layers:
   - Default
   - TransparentFX

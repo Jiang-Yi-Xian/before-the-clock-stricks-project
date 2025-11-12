@@ -16,6 +16,8 @@ public class PoliceEventController : MonoBehaviour
     public bool isPoliceArrived = false;
     public bool canInterrupt = false;
 
+    [SerializeField] private SimpleDoorController frontDoor;
+
     void Awake()
     {
         Instance = this;
@@ -25,7 +27,7 @@ public class PoliceEventController : MonoBehaviour
     {
         isPoliceArrived = true;
 
-        if (SimpleDoorController.Instance.isDoorOpen) return;
+        if (frontDoor != null && frontDoor.isDoorOpen) return;
 
         GameEventsManager.Instance.dialogueEvents.EnterDialogue(dialogueKnotName);
 

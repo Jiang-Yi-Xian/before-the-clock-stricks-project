@@ -14,9 +14,7 @@ public class TriggerHandler : MonoBehaviour
 
     private bool hasTriggered = false;
 
-    public ClockTimelineController timelineController;
-
-    bool played;
+    [SerializeField] private string cameraTargetName;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -38,13 +36,9 @@ public class TriggerHandler : MonoBehaviour
             }
         }
 
-        if (gameObject.tag == "EnterDoor") 
+        if (gameObject.tag == "RoomCameraSwitch") 
         {
-            hasTriggered = true;
-
-            if (played) return;
-            played = true;
-            timelineController.PlaySequence();
+            CameraManager.Instance.SwitchTo(cameraTargetName);
         }
     }
     private IEnumerator DelayedTrigger()

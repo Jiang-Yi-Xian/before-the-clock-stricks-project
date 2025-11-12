@@ -55,9 +55,6 @@ public class InteractableObject : MonoBehaviour, IInteractable
     // 物件被互動時的主邏輯 (根據 ItemData 設定的互動類型，分派對應行為)
     public void Interact() 
     {
-        if (isInteracted || this == null) return;
-        isInteracted = true;
-
         if (itemData == null) return;
 
         switch (itemData.interactionType) 
@@ -83,6 +80,9 @@ public class InteractableObject : MonoBehaviour, IInteractable
     // 處理拾取物品的邏輯
     private void Pickup() 
     {
+        if (isInteracted || this == null) return;
+        isInteracted = true;
+
         var inventory = InventorySystem.Instance;
         if (inventory == null)
         {
@@ -105,6 +105,9 @@ public class InteractableObject : MonoBehaviour, IInteractable
     // 處理觸碰物件的邏輯
     private void Touch() 
     {
+        if (isInteracted || this == null) return;
+        isInteracted = true;
+
         onInteract?.Invoke();
         Destroy(gameObject);
     }
@@ -151,24 +154,50 @@ public class InteractableObject : MonoBehaviour, IInteractable
     {
         if (OpenDoorController.Instance.IsDooropened == false) return;
 
-        PlayerController.Instance.TriggerPlayerAnim("openingDoor");
-
-        if (SimpleDoorController.Instance.isDoorOpen)
+        if (CompareTag("BathroomDoor") || CompareTag("BedroomDoor"))
         {
-            SimpleDoorController.Instance.CloseDoor();
+            PlayerController.Instance.TriggerPlayerAnim("openingDoor");
+
+            var door = GetComponent<SimpleDoorController>();
+            if (door != null)
+            {
+                if (door.isDoorOpen)
+                {
+                    door.CloseDoor();
+                }
+                else
+                {
+                    door.OpenDoor();
+                }
+            }
+            //Debug.Log("BathroomDoor or BedroomDoor interacted");
         }
         else 
         {
-            SimpleDoorController.Instance.OpenDoor();
-        }
+            PlayerController.Instance.TriggerPlayerAnim("openingDoor");
 
-        if (PoliceEventController.Instance.canInterrupt) 
-        {
-            DialogueManager.Instance.InterruptDialogue();
+            var door = GetComponent<SimpleDoorController>();
+            if (door != null)
+            {
+                if (door.isDoorOpen)
+                {
+                    door.CloseDoor();
+                }
+                else
+                {
+                    door.OpenDoor();
+                }
+            }
 
-            StoryManager.Instance.TriggerEvent("PoliceEnter");
 
-            PoliceEventController.Instance.canInterrupt = false;
+            if (PoliceEventController.Instance.canInterrupt)
+            {
+                DialogueManager.Instance.InterruptDialogue();
+
+                StoryManager.Instance.TriggerEvent("PoliceEnter");
+
+                PoliceEventController.Instance.canInterrupt = false;
+            }
         }
     }
 }
