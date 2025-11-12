@@ -29,6 +29,8 @@ public class InteractableObject : MonoBehaviour, IInteractable
     // 讓 PlayerController 能讀到自訂半徑
     public float BlockRadius => blockRadius;
 
+    private bool isInteracted = false;
+
     private void Reset()
     {
         // 建議把本物件 Layer 設為 Interactable（請先在專案建立此 Layer）
@@ -53,6 +55,9 @@ public class InteractableObject : MonoBehaviour, IInteractable
     // 物件被互動時的主邏輯 (根據 ItemData 設定的互動類型，分派對應行為)
     public void Interact() 
     {
+        if (isInteracted || this == null) return;
+        isInteracted = true;
+
         if (itemData == null) return;
 
         switch (itemData.interactionType) 
