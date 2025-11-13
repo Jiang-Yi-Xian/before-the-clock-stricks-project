@@ -170,7 +170,6 @@ public class OpenDoorController : MonoBehaviour
         IsDooropened = true;
     }
 
-    // ---------- 小協程們 ---------- 
     IEnumerator MoveToPointCo(Vector3 targetPos)
     {
         agent.isStopped = false;
