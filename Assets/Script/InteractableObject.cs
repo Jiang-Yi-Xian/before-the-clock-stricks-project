@@ -31,6 +31,15 @@ public class InteractableObject : MonoBehaviour, IInteractable
 
     private bool isInteracted = false;
 
+    public enum PickupStyle
+    {
+        Standing,
+        Crouching
+    }
+
+    [Header("Pickup Settings")]
+    [SerializeField] private PickupStyle pickupStyle = PickupStyle.Standing;
+
     private void Reset()
     {
         // 建議把本物件 Layer 設為 Interactable（請先在專案建立此 Layer）
@@ -94,7 +103,16 @@ public class InteractableObject : MonoBehaviour, IInteractable
             PlayerController.Instance.StopMovementHard();
             PlayerController.Instance.isMove = false;
 
-            anim.SetTrigger("pickup");
+            switch (pickupStyle)
+            {
+                case PickupStyle.Crouching:
+                    anim.SetTrigger("pickup");
+                    break;
+                case PickupStyle.Standing:
+                default:
+                    anim.SetTrigger("pickupstand");
+                    break;
+            }
 
             PlayerController.Instance.LockAnimator(true);
 
