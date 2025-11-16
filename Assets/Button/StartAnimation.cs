@@ -47,7 +47,12 @@ public class PlayVideoOnClick : MonoBehaviour
             videoPlayer.Stop();                       // 先停止影片
             videoPlayer.gameObject.SetActive(false);  // 再關閉整個 VideoPlayer
         }
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(1);
       
+    }
+
+    public void QuitGame() 
+    {
+        Application.Quit();
     }
 }

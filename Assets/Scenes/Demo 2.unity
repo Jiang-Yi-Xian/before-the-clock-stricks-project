@@ -10118,7 +10118,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeline: {fileID: 1232641286}
   useTimer: 1
-  delayInSeconds: 45
+  delayInSeconds: 90
   policeCharacter: {fileID: 738376682}
   requireEnterDoor: 0
 --- !u!1 &1235267332
@@ -12329,7 +12329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c30b01c111156654fad6d12758e441fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loopDuration: 70
+  loopDuration: 180
 --- !u!1 &1592742576
 GameObject:
   m_ObjectHideFlags: 0
