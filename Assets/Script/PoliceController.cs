@@ -4,13 +4,26 @@ using UnityEngine.AI;
 
 public class PoliceController : MonoBehaviour
 {
+    [Header("Ref")]
     public static PoliceController Instance;
     public NavMeshAgent agent;
     public Animator animator;
+    public ParticleSystem muzzleFlash;
+    public AudioSource shootSound;
+    public Transform shootPoint;
+    public float shootDamage = 100f;
+
+    [Header("Gun")]
+    public GameObject gun;
+
+    [Header("Player")]
+    public Transform playerTransform;
 
     void Awake()
     {
         Instance = this;
+
+        BindGunToHand();
     }
 
     void Update()
@@ -46,6 +59,14 @@ public class PoliceController : MonoBehaviour
         animator.SetBool("iswalk", isMoving);
     }
 
+    void BindGunToHand()
+    {
+        Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
+        gun.transform.SetParent(rightHand);
+        gun.transform.localPosition = Vector3.zero;
+        gun.transform.localRotation = Quaternion.identity;
+    }
+
     public IEnumerator MoveToInteractionPoint(string pointName) 
     {
         var point = InteractionPointManager.Instance.GetPoint(pointName);
@@ -68,9 +89,25 @@ public class PoliceController : MonoBehaviour
 
     private void HandleStoryEvent(string eventName)
     {
-        if (eventName == "PoliceEnter") 
+        //if (eventName == "PoliceEnter") 
+        //{
+        //    StartCoroutine(DelayEnterDoor());
+        //}
+        switch (eventName) 
         {
-            StartCoroutine(DelayEnterDoor());
+            case "PoliceEnter":
+                StartCoroutine(DelayEnterDoor());
+                break;
+            case "PoliceDrawGun":
+                DrawGun();
+                break;
+            case "PoliceShoot":
+                StartCoroutine(Shoot());
+                break;
+            case "PoliceHolsterGun":
+                HolsterGun();
+                break;
+
         }
     }
 
@@ -84,5 +121,40 @@ public class PoliceController : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
 
         GameEventsManager.Instance.dialogueEvents.EnterDialogue("PoliceEnter/PoliceEnter");
+    }
+
+    void DrawGun() 
+    {
+        animator.SetTrigger("drawGun");
+    }
+
+    private IEnumerator Shoot() 
+    {
+        yield return new WaitForSeconds(7.5f);
+        muzzleFlash.Play();
+        shootSound.Play();
+
+
+        if (Physics.Raycast(shootPoint.position, shootPoint.forward, out RaycastHit hit, 50f))
+        {
+            if (hit.collider.CompareTag("Player"))
+            {
+                hit.collider.GetComponent<PlayerController>().DieLoop();
+            }
+        }
+    }
+
+    void HolsterGun() 
+    {
+        animator.SetTrigger("holsterGun");
+    }
+
+    public void ShowGun() 
+    {
+        gun.SetActive(true);
+    }
+    public void HideGun()
+    {
+        gun.SetActive(false);
     }
 }

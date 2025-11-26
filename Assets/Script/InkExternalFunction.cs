@@ -29,6 +29,8 @@ public class InkExternalFunction
         });
 
         story.BindExternalFunction("TriggerAnim", (string key) => PoliceEventController.Instance.OnTriggerAnim(key));
+
+        story.BindExternalFunction("TriggerEvent", (string eventName) => StoryManager.Instance.TriggerEvent(eventName));
     }
 
     public void Unbind(Story story)

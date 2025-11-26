@@ -1,4 +1,5 @@
 EXTERNAL HasMemory(key)
+EXTERNAL TriggerEvent(eventName)
 
 == PoliceEnter ==
 
@@ -64,6 +65,11 @@ EXTERNAL HasMemory(key)
 (不理會警察先去救妻子)
 --#delay = 1
 不要浪費我時間!!
+~ TriggerEvent("PoliceDrawGun")
+--#delay = 10
+~ TriggerEvent("PoliceShoot")
+--#delay = 2
+~ TriggerEvent("PoliceHolsterGun")
 -> END
 
 == askPolice ==

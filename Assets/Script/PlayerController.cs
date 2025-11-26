@@ -50,6 +50,9 @@ public class PlayerController : MonoBehaviour
 
     public bool animatorLocked = false;
 
+    [Header("DieRef")]
+    bool isDead = false;
+
     private void Awake()
     {
         Instance = this;
@@ -399,5 +402,41 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(1.5f);
 
         StartCoroutine(MoveToStoryInteractionPoint("LeadRoleBackForward"));
+    }
+
+    public void DieLoop() 
+    {
+        if (isDead) return;
+        isDead = true;
+
+        animator.SetTrigger("deadforward");
+
+        AdjustToGround();
+
+        StopMovementHard();
+
+        // Loop
+        StartCoroutine(DelayLoop());
+    }
+
+    private IEnumerator DelayLoop() 
+    {
+        yield return new WaitForSeconds(5f);
+
+        LoopManager.Instance.TriggerLoop();
+    }
+
+    void AdjustToGround()
+    {
+        RaycastHit hit;
+
+        // 從角色的 Pivot 向下打射線
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out hit, 3f))
+        {
+            // 將角色的 Y 改為地板高度
+            Vector3 pos = transform.position;
+            pos.y = hit.point.y;
+            transform.position = pos;
+        }
     }
 }
