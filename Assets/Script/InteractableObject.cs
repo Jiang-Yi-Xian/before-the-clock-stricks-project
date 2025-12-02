@@ -170,7 +170,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
 
     private void OpenDoor() 
     {
-        if (OpenDoorController.Instance.IsDooropened == false) return;
+        //if (OpenDoorController.Instance.IsDooropened == false) return;
 
         if (CompareTag("BathroomDoor") || CompareTag("BedroomDoor"))
         {

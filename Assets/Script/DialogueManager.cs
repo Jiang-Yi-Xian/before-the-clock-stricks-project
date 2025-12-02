@@ -135,31 +135,40 @@ public class DialogueManager : MonoBehaviour
     {
         if (interrupted) return;
 
-        if (story.canContinue)
-        {
-            string line = story.Continue();
-            while (IsLineBlank(line) && story.canContinue)
-            {
-                line = story.Continue();
-            }
-
-            HandleTags(story.currentTags);
-
-            GameEventsManager.Instance.dialogueEvents.DisplayDialogue(line, null);
-            if (autoContinue != null)
-                StopCoroutine(autoContinue);
-
-            autoContinue = StartCoroutine(AutoContinueNextLine(line, nextLineExtraDelay));
-        }
-        else if (story.currentChoices.Count > 0)
+        if (story.currentChoices.Count > 0)
         {
             HandleTags(story.currentTags);
             GameEventsManager.Instance.dialogueEvents.DisplayDialogue("", story.currentChoices);
+            return;
         }
-        else
+
+        if (story.canContinue)
         {
-            StartCoroutine(ExitDialogue());
+            string line = story.Continue();
+
+            HandleTags(story.currentTags);
+
+            bool isBlank = string.IsNullOrWhiteSpace(line);
+            bool hasDelay = nextLineExtraDelay > 0f;
+
+            if (!isBlank)
+            {
+                GameEventsManager.Instance.dialogueEvents.DisplayDialogue(line, null);
+                StartAutoContinue(line, nextLineExtraDelay);
+                return;
+            }
+
+            if (hasDelay)
+            {
+                StartAutoContinue("", nextLineExtraDelay);
+                return;
+            }
+
+            ContinueOrExitStory();
+            return;
         }
+
+        StartCoroutine(ExitDialogue());
     }
 
     private IEnumerator ExitDialogue()
@@ -179,63 +188,68 @@ public class DialogueManager : MonoBehaviour
         return dialogueLine.Trim() == "" || dialogueLine.Trim() == "\n";
     }
 
+    private void StartAutoContinue(string line, float extraDelay)
+    {
+        if (autoContinue != null)
+            StopCoroutine(autoContinue);
+
+        autoContinue = StartCoroutine(AutoContinueNextLine(line, extraDelay));
+    }
+
     private IEnumerator AutoContinueNextLine(string line, float extraDelay)
     {
-        AudioSource voice = AudioManager.Instance.CurrentVoiceSource;
-        SubtitleData subtitleData = AudioManager.Instance.CurrentSubtitleData;
-        var dialogueText = DialoguePanelUI.Instance?.GetDialogueText();
+        bool isEventLine = string.IsNullOrEmpty(line);
 
-        if (dialogueText == null)
+        var voice = AudioManager.Instance.defaultVoiceSource;
+        var subtitleData = AudioManager.Instance.CurrentSubtitleData;
+
+        if (isEventLine)
         {
-            Debug.LogError("找不到 Dialogue Text！");
+            yield return new WaitForSeconds(extraDelay);
+            nextLineExtraDelay = 0f;
+            ContinueOrExitStory();
             yield break;
         }
 
-        if (voice != null && subtitleData != null && subtitleData.lines.Count > 0)
+        bool hasVoice =
+            !string.IsNullOrEmpty(line) &&      // 本行是文字
+            voice != null &&
+            voice.clip != null &&
+            voice.isPlaying &&                  // 語音真的在播
+            subtitleData != null &&
+            subtitleData.lines.Count > 0;
+
+        if (hasVoice)
         {
             int index = 0;
-            dialogueText.text = "";
 
             while (voice.isPlaying && index < subtitleData.lines.Count)
             {
-                float currentTime = voice.time;
-                SubtitleLine subtitleline = subtitleData.lines[index];
-
-                if (currentTime >= subtitleline.time)
-                {
-                    dialogueText.text = subtitleline.text;
-                    index++;
-                }
-
-                yield return null;
+                float targetTime = subtitleData.lines[index].time;
+                while (voice.time < targetTime)
+                    yield return null;
+                index++;
             }
 
-            // 等最後一句話應該顯示多久
-            if (subtitleData.lines.Count > 0)
-            {
-                float lastTime = subtitleData.lines[^1].time;
-                float endTime = voice.clip.length;
-                float remain = Mathf.Clamp(endTime - lastTime, 0.2f, 10f); // 最短停 0.2 秒，最多 10 秒
+            float lastTime = subtitleData.lines[^1].time;
+            float endTime = voice.clip.length;
+            float remain = Mathf.Clamp(endTime - lastTime, 0.2f, 10f);
 
-                yield return new WaitForSeconds(remain + Mathf.Max(0f, extraDelay));
-            }
+            yield return new WaitForSeconds(remain + extraDelay);
 
-            dialogueText.text = "";
-
-            DialoguePanelUI.Instance.HideBackingPanelIfNoChoices();
+            nextLineExtraDelay = 0f;
+            ContinueOrExitStory();
+            yield break;
         }
-        else
-        {
-            // 無語音，使用 subtitleData 中的顯示速度參數（或預設值）
-            float timePerChar = subtitleData != null ? subtitleData.timePerCharacter : timePerCharacter;
-            float delay = subtitleData != null ? subtitleData.sentenceEndDelay : sentenceEndDelay;
 
-            float waitTime = (line.Length * timePerChar) + delay + Mathf.Max(0f, extraDelay);
-            yield return new WaitForSeconds(waitTime);
-        }
+        float timePerChar = subtitleData != null ? subtitleData.timePerCharacter : timePerCharacter;
+        float endDelay = subtitleData != null ? subtitleData.sentenceEndDelay : sentenceEndDelay;
+
+        float waitTime = (line.Length * timePerChar) + endDelay + extraDelay;
+
+        yield return new WaitForSeconds(waitTime);
 
         nextLineExtraDelay = 0f;
-
         ContinueOrExitStory();
     }
     private void HandleTags(List<string> tags) 

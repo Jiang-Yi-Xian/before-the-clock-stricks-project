@@ -15,6 +15,9 @@ public class PoliceController : MonoBehaviour
 
     [Header("Gun")]
     public GameObject gun;
+    public MeshRenderer gunRenderer;
+    public Vector3 gunLocalPosOffset;
+    public Vector3 gunLocalRotOffset;
 
     [Header("Player")]
     public Transform playerTransform;
@@ -22,7 +25,10 @@ public class PoliceController : MonoBehaviour
     void Awake()
     {
         Instance = this;
+    }
 
+    void Start()
+    {
         BindGunToHand();
     }
 
@@ -63,8 +69,8 @@ public class PoliceController : MonoBehaviour
     {
         Transform rightHand = animator.GetBoneTransform(HumanBodyBones.RightHand);
         gun.transform.SetParent(rightHand);
-        gun.transform.localPosition = Vector3.zero;
-        gun.transform.localRotation = Quaternion.identity;
+        gun.transform.localPosition = gunLocalPosOffset;
+        gun.transform.localRotation = Quaternion.Euler(gunLocalRotOffset);
     }
 
     public IEnumerator MoveToInteractionPoint(string pointName) 
@@ -102,7 +108,7 @@ public class PoliceController : MonoBehaviour
                 DrawGun();
                 break;
             case "PoliceShoot":
-                StartCoroutine(Shoot());
+                Shoot();
                 break;
             case "PoliceHolsterGun":
                 HolsterGun();
@@ -128,9 +134,8 @@ public class PoliceController : MonoBehaviour
         animator.SetTrigger("drawGun");
     }
 
-    private IEnumerator Shoot() 
+    void Shoot() 
     {
-        yield return new WaitForSeconds(7.5f);
         muzzleFlash.Play();
         shootSound.Play();
 
@@ -151,10 +156,10 @@ public class PoliceController : MonoBehaviour
 
     public void ShowGun() 
     {
-        gun.SetActive(true);
+        gunRenderer.enabled = true;
     }
     public void HideGun()
     {
-        gun.SetActive(false);
+        gunRenderer.enabled = false;
     }
 }
